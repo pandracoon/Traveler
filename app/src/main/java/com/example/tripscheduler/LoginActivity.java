@@ -21,7 +21,9 @@ public class LoginActivity extends AppCompatActivity {
     setContentView(R.layout.layout_login);
 
     emailEdit = findViewById(R.id.editText);
+    emailEdit.setText("whworjs7946@korea.ac.kr");
     passwordEdit = findViewById(R.id.editText2);
+    passwordEdit.setText("1234");
 
     signButton = findViewById(R.id.button4);
     loginButton = findViewById(R.id.button3);

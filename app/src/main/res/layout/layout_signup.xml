@@ -10,9 +10,10 @@
     android:id="@+id/signUpToolBar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimary"
-    tools:ignore="MissingConstraints"
-    app:titleTextColor="@color/textColor"/>
+    android:background="@color/textColor"
+    android:elevation="1dp"
+    app:titleTextColor="@color/textColorPrimary"
+    tools:ignore="MissingConstraints"/>
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline17"
     android:layout_width="wrap_content"
@@ -48,7 +49,6 @@
     android:ems="10"
     android:fontFamily="@font/mainfont_light"
     android:inputType="textPersonName"
-    android:textSize="14sp"
     app:layout_constraintBottom_toTopOf="@+id/guideline20"
     app:layout_constraintEnd_toStartOf="@+id/guideline19"
     app:layout_constraintStart_toStartOf="@+id/guideline18"
@@ -157,6 +157,42 @@
     android:fontFamily="@font/mainfont_light"
     android:text="비밀번호 확인"
     app:layout_constraintBottom_toTopOf="@+id/guideline25"
+    app:layout_constraintStart_toStartOf="@+id/guideline18"/>
+  <TextView
+    android:id="@+id/textView10"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/mainfont_light"
+    android:text="비밀번호"
+    android:textColor="@color/textColorPrimary"
+    app:layout_constraintBottom_toTopOf="@+id/guideline23"
+    app:layout_constraintStart_toStartOf="@+id/guideline18"/>
+  <TextView
+    android:id="@+id/textView11"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/mainfont_light"
+    android:text="이름"
+    android:textColor="@color/textColorPrimary"
+    app:layout_constraintBottom_toTopOf="@+id/guideline17"
+    app:layout_constraintStart_toStartOf="@+id/guideline18"/>
+  <TextView
+    android:id="@+id/textView12"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/mainfont_light"
+    android:text="비밀번호 확인"
+    android:textColor="@color/textColorPrimary"
+    app:layout_constraintBottom_toTopOf="@+id/guideline25"
+    app:layout_constraintStart_toStartOf="@+id/guideline18"/>
+  <TextView
+    android:id="@+id/textView13"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/mainfont_light"
+    android:text="이메일"
+    android:textColor="@color/textColorPrimary"
+    app:layout_constraintBottom_toTopOf="@+id/guideline21"
     app:layout_constraintStart_toStartOf="@+id/guideline18"/>
   <Button
     android:id="@+id/button"

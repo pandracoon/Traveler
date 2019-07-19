@@ -1,5 +1,6 @@
 package com.example.tripscheduler;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,7 @@ public class SignUpActivity extends AppCompatActivity {
     setContentView(R.layout.layout_signup);
 
     Toolbar toolbar = findViewById(R.id.signUpToolBar);
+    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setTitle("회원가입");
