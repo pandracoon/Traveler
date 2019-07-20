@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,6 +15,14 @@ import com.example.tripscheduler.R;
 
 public class FragmentPlace extends Fragment {
 
+  Integer a = 0;
+  TextView textView;
+  String title;
+
+  public FragmentPlace(String title) {
+    this.title = title;
+  }
+
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -20,8 +30,17 @@ public class FragmentPlace extends Fragment {
 
     View rootView = inflater.inflate(R.layout.layout_fragmentplace, container, false);
 
-    TextView textView = rootView.findViewById(R.id.textView5);
-    textView.setText("Place");
+    textView = rootView.findViewById(R.id.textView5);
+    textView.setText(title + "Place");
+
+    Button button = rootView.findViewById(R.id.button2);
+    button.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        a++;
+        textView.setText(a.toString());
+      }
+    });
 
     return rootView;
   }

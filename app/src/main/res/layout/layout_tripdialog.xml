@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/dialog1"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/textColor"
+  android:orientation="vertical">
+
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/tripToolBar"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:background="@color/textColor"
+    android:elevation="1dp"
+    app:titleTextColor="@color/textColorPrimary"
+    tools:ignore="MissingConstraints"/>
+
+  <TextView
+    android:id="@+id/tripTextView"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:elevation="1dp"
+    android:fontFamily="@font/mainfont_medium"
+    android:gravity="center"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="25sp"
+    android:text="여정 변경"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+
+
+  <ImageView
+    android:id="@+id/closeDialogImg"
+    android:layout_width="41dp"
+    android:layout_height="36dp"
+    android:layout_margin="10dp"
+    android:src="@drawable/baseline_arrow_back_black_18"
+    android:tint="#373738"
+    android:elevation="1dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/fab2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    app:fabCustomSize="64dp"
+    app:layout_constraintBottom_toTopOf="@+id/guideline35"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:srcCompat="@drawable/switchicon"/>
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline35"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.983"/>
+  <ListView
+    android:id="@+id/tripListView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:listSelector="#E9E9E9"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tripTextView"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

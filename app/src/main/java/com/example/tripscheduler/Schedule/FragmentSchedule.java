@@ -12,6 +12,12 @@ import com.example.tripscheduler.R;
 
 public class FragmentSchedule extends Fragment {
 
+  String title;
+
+  public FragmentSchedule(String title) {
+    this.title = title;
+  }
+
   @Nullable
   @Override
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -20,7 +26,7 @@ public class FragmentSchedule extends Fragment {
     View rootView = inflater.inflate(R.layout.layout_fragmentschedule, container, false);
 
     TextView textView = rootView.findViewById(R.id.textView15);
-    textView.setText("Schedule");
+    textView.setText(title + "Schedule");
 
     return rootView;
   }
