@@ -4,10 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,19 +22,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.tripscheduler.Place.FragmentPlace;
 import com.example.tripscheduler.Schedule.FragmentSchedule;
-import com.example.tripscheduler.Trip.Travel;
-import com.example.tripscheduler.Trip.TravelListViewAdapter;
+import com.example.tripscheduler.Travel.Travel;
+import com.example.tripscheduler.Travel.TravelAddActivity;
+import com.example.tripscheduler.Travel.TravelListViewAdapter;
 import com.example.tripscheduler.UI.CurvedBottomNavigationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
+
+  public static final int ADD_REQUEST = 1;
 
   TextView titleText;
   private FragmentManager fragmentManager;
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
   String currentTravel = "서울여행";
   String selectedTravel;
   int fragmentState;
+  TravelListViewAdapter adapter;
 
   String email;
 
@@ -52,11 +59,6 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.layout_main);
 
     email = getIntent().getStringExtra("email");
-
-    Toolbar toolbar = findViewById(R.id.mainToolBar);
-    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-    setSupportActionBar(toolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     titleText = findViewById(R.id.titleTextView);
     titleText.setText(currentTravel);
@@ -111,8 +113,13 @@ public class MainActivity extends AppCompatActivity {
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
     dialog.setContentView(dialogView);
 
+    Toolbar tripToolbar = dialog.findViewById(R.id.tripToolBar);
+    tripToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+    setSupportActionBar(tripToolbar);
+    getSupportActionBar().setDisplayShowTitleEnabled(false);
+
     ListView tripListView = dialog.findViewById(R.id.tripListView);
-    TravelListViewAdapter adapter = new TravelListViewAdapter();
+    adapter = new TravelListViewAdapter();
 
     tripListView.setAdapter(adapter);
     tripListView.setOnItemClickListener(new OnItemClickListener() {
@@ -152,9 +159,18 @@ public class MainActivity extends AppCompatActivity {
     adapter.addItem(new Travel(email, "파리여행", "Paris, France", "2019.02.22", "2019.03.05"));
     adapter.addItem(new Travel(email, "하노이여행", "Hanoi, Vietnam", "2019.10.02", "2019.10.19"));
 
+    ImageView addButton = dialog.findViewById(R.id.imageView3);
+    addButton.setOnClickListener(new OnClickListener() {
+      @Override
+      public void onClick(View view) {
+        Intent addIntent = new Intent(getApplicationContext(), TravelAddActivity.class);
+        startActivityForResult(addIntent, ADD_REQUEST);
+      }
+    });
+
     //종료 버튼 눌러서 종료
     ImageView imageView = (ImageView) dialog.findViewById(R.id.closeDialogImg);
-    imageView.setOnClickListener(new View.OnClickListener() {
+    imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
 
@@ -227,6 +243,18 @@ public class MainActivity extends AppCompatActivity {
 
   }
 
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+    super.onActivityResult(requestCode, resultCode, intent);
 
+    switch (requestCode) {
+      case ADD_REQUEST:
+        String[] travelData = intent.getStringArrayExtra("title");
+        adapter.addItem(new Travel(email, travelData[0], travelData[1], travelData[2], travelData[3]));
+        adapter.notifyDataSetChanged();
+
+        break;
+    }
+  }
 }
 

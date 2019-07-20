@@ -36,5 +36,5 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:1.0.0'
     implementation 'com.karumi:dexter:5.0.0'
 
-    implementation 'com.github.badoualy:stepper-indicator:1.0.7'
+    implementation 'com.shuhart.stepview:stepview:1.5.0'
 }

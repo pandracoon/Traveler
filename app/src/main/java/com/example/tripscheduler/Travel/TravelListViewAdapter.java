@@ -1,6 +1,5 @@
-package com.example.tripscheduler.Trip;
+package com.example.tripscheduler.Travel;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;

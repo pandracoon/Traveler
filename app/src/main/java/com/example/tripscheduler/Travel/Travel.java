@@ -1,4 +1,4 @@
-package com.example.tripscheduler.Trip;
+package com.example.tripscheduler.Travel;
 
 public class Travel {
 

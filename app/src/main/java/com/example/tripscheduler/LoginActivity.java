@@ -53,14 +53,15 @@ public class LoginActivity extends AppCompatActivity {
       if (password.equals("1234")) {
         Intent loginIntent = new Intent(this, MainActivity.class);
         loginIntent.putExtra("email", email);
-        Toast.makeText(getApplicationContext(), email+"님 환영합니다!", Toast.LENGTH_SHORT)
+        Toast.makeText(getApplicationContext(), email + "님 환영합니다!", Toast.LENGTH_SHORT)
             .show();
         startActivity(loginIntent);
         finish();
       }
+    } else {
+      Toast.makeText(getApplicationContext(), "해당하는 이메일 또는 비밀번호가 존재하지 않습니다.", Toast.LENGTH_SHORT)
+          .show();
     }
-    Toast.makeText(getApplicationContext(), "해당하는 이메일 또는 비밀번호가 존재하지 않습니다.", Toast.LENGTH_SHORT)
-        .show();
   }
 
   public void signUp() {
