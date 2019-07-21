@@ -63,19 +63,20 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     app:layout_constraintGuide_percent="0.09"/>
+
   <TextView
-    android:id="@+id/textView16"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingStart="5sp"
-    android:fontFamily="@font/mainfont_medium"
-    android:gravity="center_vertical"
-    android:text="2019.12.12 ~ 2019.12.16"
-    android:textSize="13sp"
-    app:layout_constraintBottom_toTopOf="@+id/guideline34"
-    app:layout_constraintEnd_toStartOf="@+id/guideline37"
-    app:layout_constraintStart_toStartOf="@+id/guideline36"
-    app:layout_constraintTop_toTopOf="@+id/guideline31"/>
+      android:id="@+id/textView16"
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:fontFamily="@font/mainfont_medium"
+      android:gravity="center_vertical"
+      android:paddingStart="3sp"
+      android:text="2019.12.12 ~ 2019.12.16"
+      android:textSize="13sp"
+      app:layout_constraintBottom_toTopOf="@+id/guideline34"
+      app:layout_constraintEnd_toStartOf="@+id/guideline37"
+      app:layout_constraintStart_toStartOf="@+id/guideline36"
+      app:layout_constraintTop_toTopOf="@+id/guideline31" />
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline37"
     android:layout_width="wrap_content"
@@ -98,18 +99,19 @@
     app:layout_constraintStart_toStartOf="@+id/guideline37"
     app:layout_constraintTop_toTopOf="@+id/guideline31"
     app:srcCompat="@drawable/baseline_place_black_18"/>
+
   <TextView
-    android:id="@+id/textView17"
-    android:layout_width="wrap_content"
-    android:layout_height="0dp"
-    android:paddingStart="5sp"
-    android:fontFamily="@font/mainfont_medium"
-    android:gravity="center_vertical"
-    android:text="TextView"
-    android:textSize="13sp"
-    app:layout_constraintBottom_toTopOf="@+id/guideline34"
-    app:layout_constraintStart_toEndOf="@+id/imageView2"
-    app:layout_constraintTop_toTopOf="@+id/guideline31"/>
+      android:id="@+id/textView17"
+      android:layout_width="wrap_content"
+      android:layout_height="0dp"
+      android:fontFamily="@font/mainfont_medium"
+      android:gravity="center_vertical"
+      android:paddingStart="3sp"
+      android:text="TextView"
+      android:textSize="13sp"
+      app:layout_constraintBottom_toTopOf="@+id/guideline34"
+      app:layout_constraintStart_toEndOf="@+id/imageView2"
+      app:layout_constraintTop_toTopOf="@+id/guideline31" />
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline40"
     android:layout_width="wrap_content"

@@ -25,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
     passwordEdit = findViewById(R.id.editText2);
     passwordEdit.setText("1234");
 
-    signButton = findViewById(R.id.button4);
+    signButton = findViewById(R.id.button4);  //Todo: (단순 UI)로그인 버튼 활성화 시키기
     loginButton = findViewById(R.id.button3);
 
     loginButton.setOnClickListener(new OnClickListener() {

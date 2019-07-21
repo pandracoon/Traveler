@@ -13,13 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.tripscheduler.R;
 
-public class FragmentPlace extends Fragment {
+public class PlaceFragment extends Fragment {
 
   Integer a = 0;
   TextView textView;
   String title;
 
-  public FragmentPlace(String title) {
+  public PlaceFragment(String title) {
     this.title = title;
   }
 

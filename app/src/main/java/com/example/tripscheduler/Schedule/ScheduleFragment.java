@@ -10,11 +10,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.example.tripscheduler.R;
 
-public class FragmentSchedule extends Fragment {
+public class ScheduleFragment extends Fragment {
 
   String title;
 
-  public FragmentSchedule(String title) {
+  public ScheduleFragment(String title) {
     this.title = title;
   }
 

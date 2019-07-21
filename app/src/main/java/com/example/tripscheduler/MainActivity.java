@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,8 +26,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.example.tripscheduler.Place.FragmentPlace;
-import com.example.tripscheduler.Schedule.FragmentSchedule;
+import com.example.tripscheduler.Place.PlaceFragment;
+import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
 import com.example.tripscheduler.Travel.TravelListViewAdapter;
@@ -42,8 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
   TextView titleText;
   private FragmentManager fragmentManager;
-  private FragmentPlace fragmentPlace;
-  private FragmentSchedule fragmentSchedule;
+  private PlaceFragment fragmentPlace;
+  private ScheduleFragment fragmentSchedule;
   FloatingActionButton fab1;
   FloatingActionButton fab2;
   String currentTravel = "서울여행";
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     fragmentManager = getSupportFragmentManager();
     FragmentTransaction transaction = fragmentManager.beginTransaction();
-    transaction.add(R.id.frameLayout, new FragmentSchedule(currentTravel)).commit();
+    transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
 
     fab1 = findViewById(R.id.fab1);
     fab1.bringToFront();
@@ -90,11 +89,11 @@ public class MainActivity extends AppCompatActivity {
             switch (menuItem.getItemId()) {
               case R.id.place:
                 fragmentState = 1;
-                transaction.replace(R.id.frameLayout, new FragmentPlace(currentTravel)).commit();
+                transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel)).commit();
                 break;
               case R.id.schedule:
                 fragmentState = 2;
-                transaction.replace(R.id.frameLayout, new FragmentSchedule(currentTravel)).commit();
+                transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
                 break;
               case R.id.trip:
                 break;
@@ -146,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
         revealShow(dialogView, false, dialog);
         if (fragmentState == 1) {
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new FragmentPlace(currentTravel)).commit();
+          transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel)).commit();
         } else {
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new FragmentSchedule(currentTravel)).commit();
+          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
         }
       }
     });
