@@ -36,4 +36,28 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
 
     implementation 'com.shuhart.stepview:stepview:1.5.0'
+
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    // RxJava
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.7'
+
+    // OkHttp3
+    implementation 'com.squareup.okhttp3:okhttp:4.0.0'
+
+    // Masonry Layout
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    // Badge View
+    implementation 'com.allenliu.badgeview:library:1.1.1'
+    implementation 'com.github.nikartm:image-support:1.0.5'
 }
