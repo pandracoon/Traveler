@@ -35,6 +35,8 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.baoyz.swipemenulistview.SwipeMenuListView.OnMenuItemClickListener;
 import com.example.tripscheduler.Place.PlaceFragment;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
+import com.example.tripscheduler.Server.IAppService;
+import com.example.tripscheduler.Server.RetrofitClient;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
 import com.example.tripscheduler.Travel.TravelEditActivity;
@@ -43,6 +45,13 @@ import com.example.tripscheduler.UI.CurvedBottomNavigationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -213,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
     for (int i = 0; i < travelList.size(); i++) {
       adapter.addItem(travelList.get(i));
     }
+    // adapter add items based, guess based on server response
     adapter.addItem(new Travel(email, "로마여행", "Rome, Italy", "2015.06.13", "2015.06.21"));
     adapter.addItem(new Travel(email, "서울여행", "Seoul, Korea", "2018.05.02", "2018.05.05"));
     adapter.addItem(new Travel(email, "파리여행", "Paris, France", "2019.02.22", "2019.03.05"));
@@ -357,5 +367,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
   }
+
 }
 
