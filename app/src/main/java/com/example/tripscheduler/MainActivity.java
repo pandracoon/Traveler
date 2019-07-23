@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.ViewAnimationUtils;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -26,18 +28,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
+import com.baoyz.swipemenulistview.SwipeMenuListView.OnMenuItemClickListener;
 import com.example.tripscheduler.Place.PlaceFragment;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
+import com.example.tripscheduler.Travel.TravelEditActivity;
 import com.example.tripscheduler.Travel.TravelListViewAdapter;
 import com.example.tripscheduler.UI.CurvedBottomNavigationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
   public static final int ADD_REQUEST = 1;
+  public static final int EDIT_REQUEST = 2;
 
   TextView titleText;
   private FragmentManager fragmentManager;
@@ -49,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
   String selectedTravel;
   int fragmentState;
   TravelListViewAdapter adapter;
+  ArrayList<Travel> travelList;// 여기서 travel들을 보관했다가, 여정 선택을 띄울때마다 for문으로 adapter에 넣는 구조 => 213줄에서 추가됨.
 
   String email;
 
@@ -58,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     setContentView(R.layout.layout_main);
 
     email = getIntent().getStringExtra("email");
+    travelList = new ArrayList<>();
 
     titleText = findViewById(R.id.titleTextView);
     titleText.setText(currentTravel);
@@ -118,9 +130,54 @@ public class MainActivity extends AppCompatActivity {
     getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     ListView tripListView = dialog.findViewById(R.id.tripListView);
+//    SwipeMenuListView tripListView = dialog.findViewById(R.id.tripListView);
     adapter = new TravelListViewAdapter();
 
     tripListView.setAdapter(adapter);
+
+//    SwipeMenuCreator creator = new SwipeMenuCreator() {
+//      @Override
+//      public void create(SwipeMenu menu) {
+//        SwipeMenuItem editItem = new SwipeMenuItem(getApplicationContext());
+//        // set item background
+//        editItem.setBackground(new ColorDrawable(Color.parseColor("#2196F3")));
+//        // set item width
+//        editItem.setWidth(170);
+//        // set a icon
+//        editItem.setIcon(R.drawable.edit_icon);
+//        // add to menu
+//        menu.addMenuItem(editItem);
+//
+//        SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
+//        // set item background
+//        deleteItem.setBackground(new ColorDrawable(Color.RED));
+//        // set item width
+//        deleteItem.setWidth(170);
+//        // set a icon
+//        deleteItem.setIcon(R.drawable.delete_icon);
+//        // add to menu
+//        menu.addMenuItem(deleteItem);
+//      }
+//    };
+//
+//    tripListView.setMenuCreator(creator);
+//
+//    tripListView.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+//      @Override
+//      public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+//        switch (index) {
+//          case 0:
+//            Log.e("dd", "onMenuItemClick: clicked item " + index);
+//            break;
+//          case 1:
+//            Log.e("dd", "onMenuItemClick: clicked item " + index);
+//            break;
+//        }
+//        // false : close the menu; true : not close the menu
+//        return false;
+//      }
+//    });
+
     tripListView.setOnItemClickListener(new OnItemClickListener() {
       @Override
       public void onItemClick(AdapterView parent, View v, int position, long id) {
@@ -153,6 +210,9 @@ public class MainActivity extends AppCompatActivity {
       }
     });
 
+    for (int i = 0; i < travelList.size(); i++) {
+      adapter.addItem(travelList.get(i));
+    }
     adapter.addItem(new Travel(email, "로마여행", "Rome, Italy", "2015.06.13", "2015.06.21"));
     adapter.addItem(new Travel(email, "서울여행", "Seoul, Korea", "2018.05.02", "2018.05.05"));
     adapter.addItem(new Travel(email, "파리여행", "Paris, France", "2019.02.22", "2019.03.05"));
@@ -194,6 +254,18 @@ public class MainActivity extends AppCompatActivity {
           revealShow(dialogView, false, dialog);
           return true;
         }
+
+        return false;
+      }
+    });
+
+    tripListView.setOnItemLongClickListener(new OnItemLongClickListener() {
+      @Override
+      public boolean onItemLongClick(AdapterView parent, View v, int position, long id) {
+        Travel travel = (Travel) parent.getItemAtPosition(position);
+        Intent intent = new Intent(getApplicationContext(), TravelEditActivity.class);
+        intent.putExtra("travel", travel);
+        startActivityForResult(intent, EDIT_REQUEST);
 
         return false;
       }
@@ -243,16 +315,46 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) { //여기서 data 추가 수정 삭제가 발생. adapter랑 travelList에 둘다 추가하고 삭제해줌.
     super.onActivityResult(requestCode, resultCode, intent);
 
     switch (requestCode) {
       case ADD_REQUEST:
-        String[] travelData = intent.getStringArrayExtra("title");
-        adapter.addItem(new Travel(email, travelData[0], travelData[1], travelData[2], travelData[3]));
-        adapter.notifyDataSetChanged();
-
+        if (resultCode == RESULT_OK) {
+          String[] travelData = intent.getStringArrayExtra("title");
+          Travel travel = new Travel(email, travelData[0], travelData[1], travelData[2],
+              travelData[3]);
+          adapter.addItem(travel);
+          travelList.add(travel);
+          adapter.notifyDataSetChanged();
+        }
         break;
+      case EDIT_REQUEST:
+        if (resultCode == RESULT_OK) {
+          int state = intent.getIntExtra("state", 0);
+          if(state == 1){
+            Travel travel = (Travel)intent.getSerializableExtra("travel");
+            Travel newTravel = (Travel)intent.getSerializableExtra("newTravel");
+            adapter.deleteItem(travel);
+            adapter.addItem(newTravel);
+            for (int i = 0; i < travelList.size(); i++) {
+              if(travelList.get(i).getTitle().equals(travel.getTitle())){
+                travelList.remove(i);
+              }
+            }
+            travelList.add(newTravel);
+          }else{
+            Travel travel = (Travel)intent.getSerializableExtra("travel");
+            adapter.deleteItem(travel);
+            for (int i = 0; i < travelList.size(); i++) {
+              if(travelList.get(i).getTitle().equals(travel.getTitle())){
+                travelList.remove(i);
+              }
+            }
+          }
+          adapter.notifyDataSetChanged();
+          break;
+        }
     }
   }
 }

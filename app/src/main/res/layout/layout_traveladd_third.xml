@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
+  android:orientation="vertical"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:orientation="vertical">
+  android:layout_height="match_parent">
 
   <TextView
     android:id="@+id/textView18"
@@ -14,38 +13,19 @@
     android:fontFamily="@font/mainfont_bold"
     android:gravity="center_vertical"
     android:scrollbarThumbHorizontal="@color/textColorPrimary"
-    android:text="어디로\n떠나시나요?"
+    android:text="여행의\n이름을\n알려주세요"
     android:textSize="50sp"
     app:layout_constraintBottom_toTopOf="@+id/guideline49"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="@+id/guideline50"/>
+    />
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline49"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.37"/>
-  <androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guideline50"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    app:layout_constraintGuide_percent="0.19"/>
-  <TextView
-    android:id="@+id/textView19"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:paddingStart="65dp"
-    android:background="@drawable/button_border"
-    android:fontFamily="@font/mainfont_light"
-    android:gravity="center_vertical"
-    android:textColor="@color/textColorPrimary"
-    android:textSize="20sp"
-    app:layout_constraintBottom_toTopOf="@+id/guideline54"
-    app:layout_constraintEnd_toStartOf="@+id/guideline52"
-    app:layout_constraintStart_toStartOf="@+id/imageView4"
-    app:layout_constraintTop_toTopOf="@+id/guideline53"/>
+
   <androidx.constraintlayout.widget.Guideline
     android:id="@+id/guideline51"
     android:layout_width="wrap_content"
@@ -70,20 +50,52 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     app:layout_constraintGuide_percent="0.55"/>
-  <ImageView
-    android:id="@+id/imageView4"
+  <EditText
+    android:id="@+id/editText7"
     android:layout_width="0dp"
     android:layout_height="0dp"
-    android:tint="@color/colorPrimary"
-    app:layout_constraintBottom_toBottomOf="@+id/textView19"
-    app:layout_constraintEnd_toStartOf="@+id/guideline55"
+    android:background="@drawable/edittext_border"
+    android:ems="10"
+    android:fontFamily="@font/mainfont_light"
+    android:gravity="center"
+    android:inputType="textPersonName"
+    android:textColor="@color/textColorPrimary"
+    app:layout_constraintBottom_toTopOf="@+id/guideline54"
+    app:layout_constraintEnd_toStartOf="@+id/guideline52"
     app:layout_constraintStart_toStartOf="@+id/guideline51"
-    app:layout_constraintTop_toTopOf="@+id/textView19"
-    app:srcCompat="@drawable/baseline_search_black_18"/>
-  <androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guideline55"
+    app:layout_constraintTop_toTopOf="@+id/guideline53"/>
+  <TextView
+    android:id="@+id/textView23"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintGuide_percent="0.26034063"/>
+    android:fontFamily="@font/mainfont_light"
+    android:text="TextView"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="15sp"
+    app:layout_constraintBottom_toTopOf="@+id/guideline62"
+    app:layout_constraintEnd_toStartOf="@+id/guideline52"
+    app:layout_constraintStart_toStartOf="@+id/guideline51"/>
+  <TextView
+    android:id="@+id/textView24"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fontFamily="@font/mainfont_light"
+    android:text="TextView"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="15sp"
+    app:layout_constraintBottom_toTopOf="@+id/guideline63"
+    app:layout_constraintEnd_toStartOf="@+id/guideline52"
+    app:layout_constraintStart_toStartOf="@+id/guideline51"/>
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline62"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.6019152"/>
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline63"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.6593707"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

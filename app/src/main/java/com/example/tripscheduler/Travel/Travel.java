@@ -1,6 +1,8 @@
 package com.example.tripscheduler.Travel;
 
-public class Travel {
+import java.io.Serializable;
+
+public class Travel implements Serializable {
 
   private String email, title, area, startDate, endDate;
 

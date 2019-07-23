@@ -74,6 +74,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tripTextView"
         app:layout_constraintVertical_bias="1.0" />
 
+    <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
+      <!--android:id="@+id/tripListView"-->
+      <!--android:layout_width="0dp"-->
+      <!--android:layout_height="0dp"-->
+      <!--android:listSelector="#E6E6E6"-->
+      <!--app:layout_constraintBottom_toBottomOf="parent"-->
+      <!--app:layout_constraintEnd_toEndOf="parent"-->
+      <!--app:layout_constraintStart_toStartOf="parent"-->
+      <!--app:layout_constraintTop_toBottomOf="@+id/tripTextView"/>-->
+
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="41dp"

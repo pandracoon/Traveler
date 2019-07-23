@@ -1,3 +1,4 @@
 <resources>
   <string name="app_name">TripScheduler</string>
+  <string name="places_api_key">AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA</string>
 </resources>

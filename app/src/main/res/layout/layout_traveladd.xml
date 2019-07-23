@@ -63,6 +63,7 @@
         app:layout_constraintGuide_percent="0.05" />
 
     <FrameLayout
+      android:id="@+id/tripAddFrame"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"

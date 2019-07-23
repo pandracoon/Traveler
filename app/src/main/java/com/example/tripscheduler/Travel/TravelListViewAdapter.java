@@ -60,4 +60,13 @@ public class TravelListViewAdapter extends BaseAdapter {
     travelItemList.add(travel);
   }
 
+  public void deleteItem(Travel travel) {
+    String title = travel.getTitle();
+    for (int i = 0; i < travelItemList.size(); i++) {
+      if(travelItemList.get(i).getTitle().equals(title)){
+        travelItemList.remove(i);
+      }
+    }
+  }
+
 }
