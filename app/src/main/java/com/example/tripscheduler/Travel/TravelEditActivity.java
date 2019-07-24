@@ -196,9 +196,9 @@ public class TravelEditActivity extends AppCompatActivity {
     menuInflater.inflate(R.menu.info_menu, menu);
 
     MenuItem editMenu = menu.findItem(R.id.edit);
-    tintMenuIcon(context, editMenu, R.color.colorPrimary);
+    tintMenuIcon(context, editMenu, R.color.textColorPrimary);
     MenuItem deleteMenu = menu.findItem(R.id.delete);
-    tintMenuIcon(context, deleteMenu, R.color.colorPrimary);
+    tintMenuIcon(context, deleteMenu, R.color.textColorPrimary);
     return true;
   }
 

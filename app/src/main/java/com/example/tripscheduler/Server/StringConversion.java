@@ -4,22 +4,22 @@ import java.util.ArrayList;
 
 public class StringConversion {
 
-    public String arrayListToString_1(ArrayList<Integer> arrayList) {
+   public static String arrayListToString_1(ArrayList<Integer> arrayList) {
 
         return arrayList.toString();
     }
 
-    public String arrayListToString_2(ArrayList<ArrayList<Integer>> arrayList) {
+    public static String arrayListToString_2(ArrayList<ArrayList<Integer>> arrayList) {
 
         return arrayList.toString();
     }
 
-    public String integerToString_2(Integer num1, Integer num2) {
+    public static String doubleToString_2(Double lat, Double lng) {
 
-        return num1.toString() + " " + num2.toString();
+        return lat.toString() + " " + lng.toString();
     }
 
-    public String integerToString_3(Integer num1, Integer num2, Integer num3) {
+    public static String integerToString_3(Integer num1, Integer num2, Integer num3) {
 
         return num1.toString() + " " + num2.toString() + " " + num3.toString();
     }

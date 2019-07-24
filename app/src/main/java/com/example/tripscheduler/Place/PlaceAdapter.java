@@ -2,25 +2,16 @@ package com.example.tripscheduler.Place;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.allenliu.badgeview.BadgeFactory;
-import com.allenliu.badgeview.BadgeView;
 import com.bumptech.glide.Glide;
 import com.example.tripscheduler.R;
-
-import org.checkerframework.checker.linear.qual.Linear;
 
 import java.util.ArrayList;
 
@@ -29,9 +20,9 @@ import ru.nikartm.support.ImageBadgeView;
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder> {
 
     private Context context;
-    private ArrayList<Place> mList;
+    private ArrayList<TPlace> mList;
 
-    public PlaceAdapter(Context context, ArrayList<Place> list) {
+    public PlaceAdapter(Context context, ArrayList<TPlace> list) {
         this.context = context;
         this.mList = list;
     }

@@ -4,10 +4,6 @@
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-permission android:name="android.permission.INTERNET"/>
 
-  <meta-data
-    android:name="com.google.android.geo.API_KEY"
-    android:value="AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA"/>
-
   <application
     android:usesCleartextTraffic="true"
     android:allowBackup="true"
@@ -30,5 +26,10 @@
     <activity android:name=".SignUpActivity"></activity>
     <activity android:name=".Travel.TravelAddActivity"></activity>
     <activity android:name=".Travel.TravelEditActivity"></activity>
+    <activity android:name=".Place.PlaceAddMenuActivity"></activity>
+    <activity android:name=".Place.PlaceAddActivity"></activity>
+    <meta-data
+      android:name="com.google.android.geo.API_KEY"
+      android:value="AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA"/>
   </application>
 </manifest>

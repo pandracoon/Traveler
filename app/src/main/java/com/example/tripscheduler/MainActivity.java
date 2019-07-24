@@ -3,13 +3,18 @@ package com.example.tripscheduler;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,21 +27,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import com.baoyz.swipemenulistview.SwipeMenu;
-import com.baoyz.swipemenulistview.SwipeMenuCreator;
-import com.baoyz.swipemenulistview.SwipeMenuItem;
-import com.baoyz.swipemenulistview.SwipeMenuListView;
-import com.baoyz.swipemenulistview.SwipeMenuListView.OnMenuItemClickListener;
+import com.example.tripscheduler.Place.PlaceAddMenuActivity;
 import com.example.tripscheduler.Place.PlaceFragment;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
-import com.example.tripscheduler.Server.IAppService;
-import com.example.tripscheduler.Server.RetrofitClient;
+import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
 import com.example.tripscheduler.Travel.TravelEditActivity;
@@ -46,17 +48,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavig
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-
 public class MainActivity extends AppCompatActivity {
 
-  public static final int ADD_REQUEST = 1;
-  public static final int EDIT_REQUEST = 2;
+  public static final int ADD_TRAVEL_REQUEST = 1;
+  public static final int EDIT_TRAVEL_REQUEST = 2;
+  public static final int ADD_PLACE_REQUEST = 3;
 
   TextView titleText;
   private FragmentManager fragmentManager;
@@ -79,6 +75,12 @@ public class MainActivity extends AppCompatActivity {
 
     email = getIntent().getStringExtra("email");
     travelList = new ArrayList<>();
+
+    Toolbar toolbar = findViewById(R.id.mainToolBar);
+    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+    setSupportActionBar(toolbar);
+    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     titleText = findViewById(R.id.titleTextView);
     titleText.setText(currentTravel);
@@ -110,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
             switch (menuItem.getItemId()) {
               case R.id.place:
                 fragmentState = 1;
-                transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel)).commit();
+                fragmentPlace = new PlaceFragment(currentTravel, email);
+                transaction.replace(R.id.frameLayout, fragmentPlace).commit();
                 break;
               case R.id.schedule:
                 fragmentState = 2;
@@ -211,7 +214,8 @@ public class MainActivity extends AppCompatActivity {
         revealShow(dialogView, false, dialog);
         if (fragmentState == 1) {
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel)).commit();
+          fragmentPlace = new PlaceFragment(currentTravel, email);
+          transaction.replace(R.id.frameLayout, fragmentPlace).commit();
         } else {
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
           transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
@@ -233,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public void onClick(View view) {
         Intent addIntent = new Intent(getApplicationContext(), TravelAddActivity.class);
-        startActivityForResult(addIntent, ADD_REQUEST);
+        startActivityForResult(addIntent, ADD_TRAVEL_REQUEST);
       }
     });
 
@@ -275,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
         Travel travel = (Travel) parent.getItemAtPosition(position);
         Intent intent = new Intent(getApplicationContext(), TravelEditActivity.class);
         intent.putExtra("travel", travel);
-        startActivityForResult(intent, EDIT_REQUEST);
+        startActivityForResult(intent, EDIT_TRAVEL_REQUEST);
 
         return false;
       }
@@ -325,11 +329,12 @@ public class MainActivity extends AppCompatActivity {
   }
 
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) { //여기서 data 추가 수정 삭제가 발생. adapter랑 travelList에 둘다 추가하고 삭제해줌.
+  protected void onActivityResult(int requestCode, int resultCode,
+      @Nullable Intent intent) { //여기서 data 추가 수정 삭제가 발생. adapter랑 travelList에 둘다 추가하고 삭제해줌.
     super.onActivityResult(requestCode, resultCode, intent);
 
     switch (requestCode) {
-      case ADD_REQUEST:
+      case ADD_TRAVEL_REQUEST:
         if (resultCode == RESULT_OK) {
           String[] travelData = intent.getStringArrayExtra("title");
           Travel travel = new Travel(email, travelData[0], travelData[1], travelData[2],
@@ -339,25 +344,25 @@ public class MainActivity extends AppCompatActivity {
           adapter.notifyDataSetChanged();
         }
         break;
-      case EDIT_REQUEST:
+      case EDIT_TRAVEL_REQUEST:
         if (resultCode == RESULT_OK) {
           int state = intent.getIntExtra("state", 0);
-          if(state == 1){
-            Travel travel = (Travel)intent.getSerializableExtra("travel");
-            Travel newTravel = (Travel)intent.getSerializableExtra("newTravel");
+          if (state == 1) {
+            Travel travel = (Travel) intent.getSerializableExtra("travel");
+            Travel newTravel = (Travel) intent.getSerializableExtra("newTravel");
             adapter.deleteItem(travel);
             adapter.addItem(newTravel);
             for (int i = 0; i < travelList.size(); i++) {
-              if(travelList.get(i).getTitle().equals(travel.getTitle())){
+              if (travelList.get(i).getTitle().equals(travel.getTitle())) {
                 travelList.remove(i);
               }
             }
             travelList.add(newTravel);
-          }else{
-            Travel travel = (Travel)intent.getSerializableExtra("travel");
+          } else {
+            Travel travel = (Travel) intent.getSerializableExtra("travel");
             adapter.deleteItem(travel);
             for (int i = 0; i < travelList.size(); i++) {
-              if(travelList.get(i).getTitle().equals(travel.getTitle())){
+              if (travelList.get(i).getTitle().equals(travel.getTitle())) {
                 travelList.remove(i);
               }
             }
@@ -365,7 +370,57 @@ public class MainActivity extends AppCompatActivity {
           adapter.notifyDataSetChanged();
           break;
         }
+      case ADD_PLACE_REQUEST:
+
+        if (requestCode == RESULT_OK) {
+          byte[] bytes = intent.getByteArrayExtra("image");
+          Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+          FragmentTransaction transaction = getSupportFragmentManager()
+              .beginTransaction();
+          fragmentPlace.addPlace(intent.getStringExtra("name"), intent.getStringExtra("latLng")
+              , intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
+          transaction.replace(R.id.frameLayout, fragmentPlace).commit(); //Todo 없애보고 해보고 그냥 해보고
+        } else {
+
+        }
+
+        break;
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater menuInflater = getMenuInflater();
+    menuInflater.inflate(R.menu.travel_menu, menu);
+
+    MenuItem addMenu = menu.findItem(R.id.add);
+    tintMenuIcon(getApplicationContext(), addMenu, R.color.textColorPrimary);
+
+    return true;
+  }
+
+  public static void tintMenuIcon(Context context, MenuItem item, @ColorRes int color) {
+    Drawable normalDrawable = item.getIcon();
+    Drawable wrapDrawable = DrawableCompat.wrap(normalDrawable);
+    DrawableCompat.setTint(wrapDrawable, context.getResources().getColor(color));
+
+    item.setIcon(wrapDrawable);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    switch (item.getItemId()) {
+      case R.id.add:
+        if (fragmentState == 1) {
+          Intent placeAddIntent = new Intent(this, PlaceAddMenuActivity.class);
+          startActivityForResult(placeAddIntent, ADD_PLACE_REQUEST);
+
+        }
+        break;
+
+    }
+    return true;
   }
 
 }
