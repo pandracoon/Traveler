@@ -2,7 +2,9 @@ package com.example.tripscheduler.Place;
 
 import android.graphics.Bitmap;
 
-public class TPlace {
+import java.io.Serializable;
+
+public class TPlace implements Serializable {
 
   private String name, location, label;
   private String image;

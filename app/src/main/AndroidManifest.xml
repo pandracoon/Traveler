@@ -29,6 +29,7 @@
     <activity android:name=".Travel.TravelEditActivity"></activity>
     <activity android:name=".Place.PlaceAddMenuActivity"></activity>
     <activity android:name=".Place.PlaceAddActivity"></activity>
+    <activity android:name=".Place.PlaceInfoActivity"></activity>
     <meta-data
       android:name="com.google.android.geo.API_KEY"
       android:value="AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA"/>

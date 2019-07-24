@@ -64,7 +64,7 @@ public class PlaceAddActivity extends AppCompatActivity implements OnMapReadyCal
   ImageView imageView;
   Button button;
   String label;
-  Bitmap resizedImage;
+  Bitmap resizedImage, scaledBitmap;
 
 
   @Override
@@ -132,7 +132,7 @@ public class PlaceAddActivity extends AppCompatActivity implements OnMapReadyCal
                       @Override
                       public void onSuccess(FetchPhotoResponse fetchPhotoResponse) {
                         Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                        Bitmap scaledBitmap = Bitmap
+                        scaledBitmap = Bitmap
                             .createScaledBitmap(bitmap, imageView.getWidth(), imageView.getHeight(),
                                 true);
                         imageView.setImageBitmap(scaledBitmap);
@@ -173,25 +173,14 @@ public class PlaceAddActivity extends AppCompatActivity implements OnMapReadyCal
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] bytes = stream.toByteArray();
 
-        System.out.println(name);
-        System.out.println(strLatLng);
-        System.out.println(label);
-        System.out.println(bytes);
-
         Intent intent = new Intent();
-        System.out.println(1);
         intent.putExtra("name", name);
-        System.out.println(2);
         intent.putExtra("latLng", strLatLng);
-        System.out.println(3);
+        System.out.println(strLatLng);
         intent.putExtra("label", label);
-        System.out.println(4);
         intent.putExtra("image", bytes);
-        System.out.println(5);
         setResult(RESULT_OK, intent);
-        System.out.println(6);
         finish();
-        System.out.println(7);
       }
     });
 

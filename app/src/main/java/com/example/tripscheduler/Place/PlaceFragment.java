@@ -1,6 +1,8 @@
 package com.example.tripscheduler.Place;
 
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -51,6 +53,7 @@ import retrofit2.Retrofit;
 public class PlaceFragment extends Fragment {
 
     IAppService apiService;
+    public static final int INFO_REQUEST = 1;
     private final String SERVER = "http://143.248.36.205:3000";
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private IAppService iAppService;
@@ -66,12 +69,18 @@ public class PlaceFragment extends Fragment {
     String strLatLng;
     String label;
     Bitmap image;
-
+    Context mContext;
 
     Button uploadButton;
 
     int state;
 
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
+    }
 
     public PlaceFragment(String title, String email) {
 
@@ -114,6 +123,33 @@ public class PlaceFragment extends Fragment {
         mRecyclerView.setAdapter(adapter);
         PlaceItemDecoration decoration = new PlaceItemDecoration(16);
         mRecyclerView.addItemDecoration(decoration);
+
+        mRecyclerView.addOnItemTouchListener(new OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+                Log.e("d","D");
+                View child = rv.findChildViewUnder(e.getX(), e.getY());
+                int position = rv.getChildAdapterPosition(child);
+                TPlace place = TPlaceList.get(position);
+
+                Intent intent = new Intent(mContext, PlaceInfoActivity.class);
+                intent.putExtra("place", place);
+                startActivityForResult(intent, INFO_REQUEST);
+
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+            }
+        });
 
         compositeDisposable.add(iAppService.places_get_one(email, title)
                 .subscribeOn(Schedulers.io())
@@ -241,5 +277,8 @@ public class PlaceFragment extends Fragment {
         }
     }
 
-
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 }

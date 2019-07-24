@@ -67,6 +67,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
         //badgeView.unbind();
         System.out.println("End of function");
+
     }
 
     @Override
