@@ -31,6 +31,11 @@ public interface IAppService {
     @FormUrlEncoded
     Observable<String> user_get_recent_one(@Field("email") String email);
 
+    @POST("UserInfo/set_recent_one")
+    @FormUrlEncoded
+    Observable<String> user_set_recent_one(@Field("email") String email,
+                                           @Field("title") String title);
+
     @POST("Travel/insert_one")
     @FormUrlEncoded
     Observable<String> travel_insert_one(@Field("email") String email,
@@ -48,6 +53,10 @@ public interface IAppService {
     @FormUrlEncoded
     Observable<String> travel_get_one(@Field("email") String email,
                                       @Field("title") String title);
+
+    @POST("Travel/get_all")
+    @FormUrlEncoded
+    Observable<String> travel_get_all(@Field("email") String email);
 
 //    @POST("Places/insert_one")
 //    @FormUrlEncoded

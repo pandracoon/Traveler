@@ -17,8 +17,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import afu.org.checkerframework.checker.nullness.qual.NonNull;
-import afu.org.checkerframework.checker.nullness.qual.Nullable;
+
 
 public class BitmapArithmetic {
     private static final int PIXEL_THRESHOLD = 100;

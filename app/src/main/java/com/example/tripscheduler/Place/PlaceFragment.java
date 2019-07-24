@@ -62,11 +62,13 @@ public class PlaceFragment extends Fragment {
   ArrayList<Place> placeList;
 
   String title;
+  String email;
 
   Button uploadButton;
 
-  public PlaceFragment(String title) {
+  public PlaceFragment(String title, String email) {
     this.title = title;
+    this.email = email;
   }
 
   @Nullable
@@ -92,7 +94,7 @@ public class PlaceFragment extends Fragment {
     PlaceItemDecoration decoration = new PlaceItemDecoration(16);
     mRecyclerView.addItemDecoration(decoration);
 
-    compositeDisposable.add(iAppService.places_get_one("bob@gmail.com", "Trip to Seoul")
+    compositeDisposable.add(iAppService.places_get_one(email, title)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .retry()
@@ -172,11 +174,16 @@ public class PlaceFragment extends Fragment {
 //        multipartImageUpload(icon2, "bob@gmail.com", "Trip to Seoul", "Place Name2", "14.12 112.", "Labe2");
 //        multipartImageUpload(icon3, "bob@gmail.com", "Trip to Seoul", "Place Name3", "14.12 12.3", "Labe3");
 //        multipartImageUpload(icon4, "bob@gmail.com", "Trip to Seoul", "Place Name4", "114.122 12.3", "this is labelsfsafase");
-//        multipartImageUpload(icon5, "bob@gmail.com", "Trip to Seoul", "Place Name5", "12.1 6.3", "accommodation");
-//        multipartImageUpload(icon6, "bob@gmail.com", "Trip to Seoul", "Place Name6", "14.12 7.3.", "transportation");
-//        multipartImageUpload(icon7, "bob@gmail.com", "Trip to Seoul", "Place Name7", "9.12 5.3", "transportation");
-//        multipartImageUpload(icon8, "bob@gmail.com", "Trip to Seoul", "Place Name8", "152.122 75.3", "attraction");
-//        multipartImageUpload(icon9, "bob@gmail.com", "Trip to Seoul", "Place Name9", "14.1 90.3", "transportation");
+        multipartImageUpload(icon5, "bob@gmail.com", "Trip to Seoul", "Place Name5", "12.1 6.3", "accommodation");
+        try { Thread.sleep(3000); } catch (InterruptedException e) { }
+        multipartImageUpload(icon6, "bob@gmail.com", "Trip to Seoul", "Place Name6", "14.12 7.3.", "transportation");
+        try { Thread.sleep(3000); } catch (InterruptedException e) { }
+        multipartImageUpload(icon7, "bob@gmail.com", "Trip to Seoul", "Place Name7", "9.12 5.3", "transportation");
+        try { Thread.sleep(3000); } catch (InterruptedException e) { }
+        multipartImageUpload(icon8, "bob@gmail.com", "Trip to Seoul", "Place Name8", "152.122 75.3", "attraction");
+        try { Thread.sleep(3000); } catch (InterruptedException e) { }
+        multipartImageUpload(icon9, "bob@gmail.com", "Trip to Seoul", "Place Name9", "14.1 90.3", "transportation");
+        try { Thread.sleep(3000); } catch (InterruptedException e) { }
         multipartImageUpload(icon10, "bob@gmail.com", "Trip to Seoul", "Place Name10", "1523.12 112.", "attraction");
 
 
@@ -234,7 +241,7 @@ public class PlaceFragment extends Fragment {
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-          Toast.makeText(getContext(), "Request failed.", Toast.LENGTH_SHORT).show();
+//          Toast.makeText(getContext(), "Request failed.", Toast.LENGTH_SHORT).show();
           t.printStackTrace();
         }
       });
@@ -244,4 +251,5 @@ public class PlaceFragment extends Fragment {
       e.printStackTrace();
     }
   }
+
 }

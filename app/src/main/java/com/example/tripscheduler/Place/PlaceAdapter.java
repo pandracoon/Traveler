@@ -20,8 +20,6 @@ import com.allenliu.badgeview.BadgeView;
 import com.bumptech.glide.Glide;
 import com.example.tripscheduler.R;
 
-import org.checkerframework.checker.linear.qual.Linear;
-
 import java.util.ArrayList;
 
 import ru.nikartm.support.ImageBadgeView;
