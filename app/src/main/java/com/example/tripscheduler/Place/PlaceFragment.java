@@ -1,10 +1,13 @@
 package com.example.tripscheduler.Place;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.tripscheduler.R;
@@ -61,6 +65,7 @@ public class PlaceFragment extends Fragment {
 
   Button uploadButton;
 
+  Context context = getActivity();
 
   public PlaceFragment(String title, String email) {
 
@@ -88,6 +93,29 @@ public class PlaceFragment extends Fragment {
         .setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
 
     adapter = new PlaceAdapter(getActivity(), TPlaceList);
+
+    mRecyclerView.addOnItemTouchListener(new OnItemTouchListener() {
+      @Override
+      public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        return false;
+      }
+
+      @Override
+      public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+        View child = rv.findChildViewUnder(e.getX(), e.getY());
+        int position = rv.getChildAdapterPosition(child);
+        TPlace place = TPlaceList.get(position);
+
+        Intent intent = new Intent(context,PlaceInfoActivity.class);
+
+      }
+
+      @Override
+      public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+      }
+    });
+
     mRecyclerView.setAdapter(adapter);
     PlaceItemDecoration decoration = new PlaceItemDecoration(16);
     mRecyclerView.addItemDecoration(decoration);

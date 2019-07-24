@@ -75,7 +75,7 @@ public class PlaceAddActivity extends AppCompatActivity implements OnMapReadyCal
     Toolbar toolbar = findViewById(R.id.placeAddToolBar);
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle("회원가입");
+    getSupportActionBar().setTitle("장소 추가");
 
     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.map);

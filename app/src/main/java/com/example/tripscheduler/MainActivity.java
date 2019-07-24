@@ -559,6 +559,7 @@ public class MainActivity extends AppCompatActivity {
               .beginTransaction();
           fragmentPlace.addPlace(intent.getStringExtra("name"), intent.getStringExtra("latLng")
               , intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
+          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
           transaction.replace(R.id.frameLayout, fragmentPlace).commit(); //Todo 없애보고 해보고 그냥 해보고
         } else {
 
