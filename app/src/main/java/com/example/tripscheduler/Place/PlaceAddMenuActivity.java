@@ -99,13 +99,18 @@ public class PlaceAddMenuActivity extends AppCompatActivity {
           label = intent.getStringExtra("label");
           imageArray = intent.getByteArrayExtra("image");
 
+          System.out.println(1);
           Intent addIntent = new Intent();
+          System.out.println(2);
           addIntent.putExtra("name", name);
           addIntent.putExtra("latLng", strLatLng);
           addIntent.putExtra("label", label);
           addIntent.putExtra("image", imageArray);
+          System.out.println(3);
           setResult(RESULT_OK, addIntent);
+          System.out.println(4);
           finish();
+          System.out.println(5);
         } else {
 
         }

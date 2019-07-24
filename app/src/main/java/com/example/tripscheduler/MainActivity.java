@@ -550,19 +550,24 @@ public class MainActivity extends AppCompatActivity {
           break;
         }
       case ADD_PLACE_REQUEST:
+        System.out.println(123);
 
-        if (requestCode == RESULT_OK) {
+        if (resultCode == RESULT_OK) {
+          System.out.println(1);
+          System.out.println(intent.getStringExtra("name"));
+          System.out.println(intent.getStringExtra("latLng"));
+          System.out.println(intent.getStringExtra("label"));
+
           byte[] bytes = intent.getByteArrayExtra("image");
           Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-          FragmentTransaction transaction = getSupportFragmentManager()
-              .beginTransaction();
-          fragmentPlace.addPlace(intent.getStringExtra("name"), intent.getStringExtra("latLng")
-              , intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
-          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
-          transaction.replace(R.id.frameLayout, fragmentPlace).commit(); //Todo 없애보고 해보고 그냥 해보고
-        } else {
+          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();//Todo 없애보고 해보고 그냥 해보고
+          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""),intent.getStringExtra("name"), intent.getStringExtra("latLng"),
+                  intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
+          transaction.replace(R.id.frameLayout, fragmentPlace).commit();
 
+        } else {
+          System.out.println("else");
         }
 
         break;

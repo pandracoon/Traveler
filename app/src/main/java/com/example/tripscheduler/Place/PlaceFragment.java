@@ -1,7 +1,6 @@
 package com.example.tripscheduler.Place;
 
-import android.content.Context;
-import android.content.Intent;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -51,190 +50,196 @@ import retrofit2.Retrofit;
 
 public class PlaceFragment extends Fragment {
 
-  IAppService apiService;
-  private final String SERVER = "http://143.248.36.205:3000";
-  private CompositeDisposable compositeDisposable = new CompositeDisposable();
-  private IAppService iAppService;
-  PlaceAdapter adapter;
+    IAppService apiService;
+    private final String SERVER = "http://143.248.36.205:3000";
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private IAppService iAppService;
+    PlaceAdapter adapter;
 
-  RecyclerView mRecyclerView;
-  ArrayList<TPlace> TPlaceList;
+    RecyclerView mRecyclerView;
+    ArrayList<TPlace> TPlaceList;
 
-  String title;
-  String email;
+    String title;
+    String email;
 
-  Button uploadButton;
+    String name;
+    String strLatLng;
+    String label;
+    Bitmap image;
 
-  Context context = getActivity();
 
-  public PlaceFragment(String title, String email) {
+    Button uploadButton;
 
-    this.title = title;
-    this.email = email;
-  }
+    int state;
 
-  @Nullable
-  @Override
-  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-      @Nullable Bundle savedInstanceState) {
-    View rootView = inflater.inflate(R.layout.layout_fragmentplace, container, false);
 
-    uploadButton = (Button) rootView.findViewById(R.id.upload_image);
+    public PlaceFragment(String title, String email) {
 
-    Retrofit retrofitClient = RetrofitClient.getInstance();
-    iAppService = retrofitClient.create(IAppService.class);
-
-    initRetrofitClient();
-
-    TPlaceList = new ArrayList<>();
-
-    mRecyclerView = (RecyclerView) rootView.findViewById(R.id.masonryGrid);
-    mRecyclerView
-        .setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-
-    adapter = new PlaceAdapter(getActivity(), TPlaceList);
-
-    mRecyclerView.addOnItemTouchListener(new OnItemTouchListener() {
-      @Override
-      public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        return false;
-      }
-
-      @Override
-      public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
-        View child = rv.findChildViewUnder(e.getX(), e.getY());
-        int position = rv.getChildAdapterPosition(child);
-        TPlace place = TPlaceList.get(position);
-
-        Intent intent = new Intent(context,PlaceInfoActivity.class);
-
-      }
-
-      @Override
-      public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-      }
-    });
-
-    mRecyclerView.setAdapter(adapter);
-    PlaceItemDecoration decoration = new PlaceItemDecoration(16);
-    mRecyclerView.addItemDecoration(decoration);
-
-    compositeDisposable.add(iAppService.places_get_one(email, title)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
-        .retry()
-        .subscribe(new Consumer<String>() {
-          @Override
-          public void accept(String data) throws Exception {
-            Log.e("places_get_one", data);
-
-            if (data.equals("0")) {
-              System.out.println("No data existed");
-            } else {
-              JsonParser jsonParser = new JsonParser();
-              JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
-
-              for (int i = 0; i < jsonArray.size(); i++) {
-                final JsonObject object = (JsonObject) jsonArray.get(i);
-                System.out.println(object.get("name"));
-                System.out.println(object.get("location"));
-                System.out.println(object.get("label"));
-                System.out.println(object.get("path"));
-
-                JsonArray location = (JsonArray) object.get("location");
-                System.out.println(location.get(0));
-                System.out.println(location.get(1));
-
-                System.out.println(SERVER + "/" + object.get("path").toString().replace("\"", ""));
-
-                String url = SERVER + "/" + object.get("path").toString().replace("\"", "");
-
-                TPlaceList.add(
-                    new TPlace(object.get("name").toString(), object.get("location").toString(),
-                        object.get("label").toString(), url));
-                adapter.notifyDataSetChanged();
-
-              }
-            }
-          }
-        }));
-
-    return rootView;
-  }
-
-  private void initRetrofitClient() {
-    OkHttpClient client = new OkHttpClient.Builder().build();
-    apiService = new Retrofit.Builder()
-        .baseUrl(SERVER + "/")
-        .client(client)
-        .build()
-        .create(IAppService.class);
-  }
-
-  private void multipartImageUpload(Bitmap mBitmap, String email, String title, final String name,
-      final String location, final String label) {
-    try {
-      File filesDir = getContext().getFilesDir();
-      File file = new File(filesDir, "image" + ".png");
-
-      ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      mBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
-      byte[] bitmapData = bos.toByteArray();
-
-      FileOutputStream fos = new FileOutputStream(file);
-      fos.write(bitmapData);
-      fos.flush();
-      fos.close();
-
-      RequestBody reqFile = RequestBody.create(file, MediaType.parse("image/*"));
-      MultipartBody.Part body = MultipartBody.Part
-          .createFormData("upload", file.getName(), reqFile);
-      RequestBody imageName = RequestBody.create("upload", MediaType.parse("text/plain"));
-      RequestBody send_email = RequestBody.create(email, MediaType.parse("text/plain"));
-      RequestBody send_title = RequestBody.create(title, MediaType.parse("text/plain"));
-      RequestBody send_name = RequestBody.create(name, MediaType.parse("text/plain"));
-      RequestBody send_location = RequestBody.create(location, MediaType.parse("text/plain"));
-      RequestBody send_label = RequestBody.create(label, MediaType.parse("text/plain"));
-
-      Call<ResponseBody> req = apiService
-          .place_insert_one(body, imageName, send_email, send_title, send_name, send_location,
-              send_label);
-      req.enqueue(new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-          if (response.code() == 200) {
-            Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_SHORT).show();
-
-            System.out.println(response.toString());
-            System.out.println(name);
-            System.out.println(location);
-            System.out.println(label);
-
-            TPlaceList.add(new TPlace(name, location, label, response.toString()));
-            adapter.notifyDataSetChanged();
-          } else {
-            Toast.makeText(getContext(), "Error : " + response.code(), Toast.LENGTH_SHORT).show();
-          }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-          Toast.makeText(getContext(), "Request failed.", Toast.LENGTH_SHORT).show();
-          t.printStackTrace();
-        }
-      });
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
+        state = 1;
+        this.title = title;
+        this.email = email;
     }
-  }
 
-  public void addPlace(String name, String strLatLng, String label, Bitmap image) {
+    public PlaceFragment(String title, String email, String name, String strLatLng, String label, Bitmap image) {
 
-    multipartImageUpload(image, title, email.replace("\"", ""), name, strLatLng, label);
-  }
+        state = 2;
+        this.title = title;
+        this.email = email;
+        this.name = name;
+        this.strLatLng = strLatLng;
+        this.label = label;
+        this.image = image;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.layout_fragmentplace, container, false);
+
+        uploadButton = (Button) rootView.findViewById(R.id.upload_image);
+
+        Retrofit retrofitClient = RetrofitClient.getInstance();
+        iAppService = retrofitClient.create(IAppService.class);
+
+        initRetrofitClient();
+
+        TPlaceList = new ArrayList<>();
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.masonryGrid);
+        mRecyclerView
+                .setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+
+        adapter = new PlaceAdapter(getActivity(), TPlaceList);
+        mRecyclerView.setAdapter(adapter);
+        PlaceItemDecoration decoration = new PlaceItemDecoration(16);
+        mRecyclerView.addItemDecoration(decoration);
+
+        compositeDisposable.add(iAppService.places_get_one(email, title)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .retry()
+                .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                        Log.e("places_get_one", data);
+
+                        if (data.equals("0")) {
+                            System.out.println("No data existed");
+                        } else {
+                            JsonParser jsonParser = new JsonParser();
+                            JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
+
+                            for (int i = 0; i < jsonArray.size(); i++) {
+                                final JsonObject object = (JsonObject) jsonArray.get(i);
+                                System.out.println(object.get("name"));
+                                System.out.println(object.get("location"));
+                                System.out.println(object.get("label"));
+                                System.out.println(object.get("path"));
+
+                                JsonArray location = (JsonArray) object.get("location");
+                                System.out.println(location.get(0));
+                                System.out.println(location.get(1));
+
+                                System.out.println(SERVER + "/" + object.get("path").toString().replace("\"", ""));
+
+                                String url = SERVER + "/" + object.get("path").toString().replace("\"", "");
+
+                                TPlaceList.add(
+                                        new TPlace(object.get("name").toString(), object.get("location").toString(),
+                                                object.get("label").toString(), url));
+
+                                adapter.notifyDataSetChanged();
+
+                            }
+                        }
+                    }
+                }));
+
+        if (state == 2) {
+            multipartImageUpload(image, email.replace("\"", ""), title, name, strLatLng, label);
+        }
+
+        return rootView;
+    }
+
+    private void initRetrofitClient() {
+        OkHttpClient client = new OkHttpClient.Builder().build();
+        apiService = new Retrofit.Builder()
+                .baseUrl(SERVER + "/")
+                .client(client)
+                .build()
+                .create(IAppService.class);
+    }
+
+    private void multipartImageUpload(Bitmap mBitmap, String email, String title, final String name,
+                                      final String location, final String label) {
+        try {
+            File filesDir = getContext().getFilesDir();
+            File file = new File(filesDir, "image" + ".png");
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            mBitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+            byte[] bitmapData = bos.toByteArray();
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bitmapData);
+            fos.flush();
+            fos.close();
+
+            RequestBody reqFile = RequestBody.create(file, MediaType.parse("image/*"));
+            MultipartBody.Part body = MultipartBody.Part
+                    .createFormData("upload", file.getName(), reqFile);
+            RequestBody imageName = RequestBody.create("upload", MediaType.parse("text/plain"));
+            RequestBody send_email = RequestBody.create(email, MediaType.parse("text/plain"));
+            RequestBody send_title = RequestBody.create(title, MediaType.parse("text/plain"));
+            RequestBody send_name = RequestBody.create(name, MediaType.parse("text/plain"));
+            RequestBody send_location = RequestBody.create(location, MediaType.parse("text/plain"));
+            RequestBody send_label = RequestBody.create(label, MediaType.parse("text/plain"));
+
+            Call<ResponseBody> req = apiService
+                    .place_insert_one(body, imageName, send_email, send_title, send_name, send_location,
+                            send_label);
+            req.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.code() == 200) {
+                        Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_SHORT).show();
+
+
+//            JsonObject object = new JsonObject().get(response.body().toString()).getAsJsonObject();
+//            System.out.println(object);
+                        System.out.println(response.toString());
+                        System.out.println(response.message());
+                        System.out.println(response.body());
+                        System.out.println(response.body());
+                        String url = response.toString().split("=")[4];
+                        url = url.split("\\}")[0];
+                        System.out.println(url);
+                        System.out.println(call.toString());
+                        System.out.println(name);
+                        System.out.println(location);
+                        System.out.println(label);
+
+                        TPlaceList.add(new TPlace(name, location, label, url));
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getContext(), "Error : " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Toast.makeText(getContext(), "Request failed.", Toast.LENGTH_SHORT).show();
+                    t.printStackTrace();
+                }
+            });
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 }
