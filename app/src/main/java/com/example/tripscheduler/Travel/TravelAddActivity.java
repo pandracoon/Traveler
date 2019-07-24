@@ -2,6 +2,7 @@ package com.example.tripscheduler.Travel;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -12,12 +13,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.tripscheduler.Place.Place;
 import com.example.tripscheduler.R;
+import com.example.tripscheduler.Server.IAppService;
+import com.example.tripscheduler.Server.RetrofitClient;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.shuhart.stepview.StepView;
 
 import java.util.ArrayList;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
+
 public class TravelAddActivity extends AppCompatActivity {
+
+  private final String SERVER = "http://143.248.36.205:3000";
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private IAppService iAppService;
 
   Button nextButton;
   StepView stepView;
@@ -29,6 +46,9 @@ public class TravelAddActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.layout_traveladd);
+
+    Retrofit retrofitClient = RetrofitClient.getInstance();
+    iAppService = retrofitClient.create(IAppService.class);
 
     area = "";
     startDate = "";

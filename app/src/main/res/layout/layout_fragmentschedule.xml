@@ -1,12 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <TextView
-    android:id="@+id/textView15"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+  <com.google.android.material.tabs.TabLayout
+      android:id="@+id/tabs"
+      android:layout_width="match_parent"
+      android:layout_height="70dp">
+
+    <com.google.android.material.tabs.TabItem
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="TextView"/>
+    android:text="Default Tab\n(When there is no schedule)" />
+
+    <!--<com.google.android.material.tabs.TabItem-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="dsaw\nasdf" />-->
+
+    <!--<com.google.android.material.tabs.TabItem-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="da\nasdf" />-->
+
+
+  </com.google.android.material.tabs.TabLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="410dp"
+        android:layout_height="664dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
+    </androidx.viewpager.widget.ViewPager>
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
 </LinearLayout>

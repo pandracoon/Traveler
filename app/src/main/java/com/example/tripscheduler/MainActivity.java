@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +40,8 @@ import com.example.tripscheduler.Place.PlaceAddMenuActivity;
 import com.example.tripscheduler.Place.PlaceFragment;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Server.BitmapArithmetic;
+import com.example.tripscheduler.Server.IAppService;
+import com.example.tripscheduler.Server.RetrofitClient;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
 import com.example.tripscheduler.Travel.TravelEditActivity;
@@ -46,7 +49,17 @@ import com.example.tripscheduler.Travel.TravelListViewAdapter;
 import com.example.tripscheduler.UI.CurvedBottomNavigationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.util.ArrayList;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -54,13 +67,17 @@ public class MainActivity extends AppCompatActivity {
   public static final int EDIT_TRAVEL_REQUEST = 2;
   public static final int ADD_PLACE_REQUEST = 3;
 
+  private final String SERVER = "http://143.248.36.205:3000";
+  private CompositeDisposable compositeDisposable = new CompositeDisposable();
+  private IAppService iAppService;
+
   TextView titleText;
   private FragmentManager fragmentManager;
   private PlaceFragment fragmentPlace;
   private ScheduleFragment fragmentSchedule;
   FloatingActionButton fab1;
   FloatingActionButton fab2;
-  String currentTravel = "서울여행";
+  String currentTravel = "Trip to Seoul";
   String selectedTravel;
   int fragmentState;
   TravelListViewAdapter adapter;
@@ -73,6 +90,9 @@ public class MainActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.layout_main);
 
+    Retrofit retrofitClient = RetrofitClient.getInstance();
+    iAppService = retrofitClient.create(IAppService.class);
+
     email = getIntent().getStringExtra("email");
     travelList = new ArrayList<>();
 
@@ -83,16 +103,34 @@ public class MainActivity extends AppCompatActivity {
     getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     titleText = findViewById(R.id.titleTextView);
-    titleText.setText(currentTravel);
+
+    compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .retry()
+            .subscribe(new Consumer<String>() {
+              @Override
+              public void accept(String data) throws Exception {
+                Log.e("user_get_recent_one", data);
+                currentTravel = data.replace("\"", "");
+                titleText.setText(currentTravel);
+
+                fragmentManager = getSupportFragmentManager();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
+              }
+            }));
+
+//    titleText.setText(currentTravel);
 
     CurvedBottomNavigationView curvedBottomNavigationView = findViewById(R.id.customBottomBar);
     curvedBottomNavigationView.inflateMenu(R.menu.navigation);
     curvedBottomNavigationView.setSelectedItemId(R.id.schedule);
     fragmentState = 2;
 
-    fragmentManager = getSupportFragmentManager();
-    FragmentTransaction transaction = fragmentManager.beginTransaction();
-    transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
+//    fragmentManager = getSupportFragmentManager();
+//    FragmentTransaction transaction = fragmentManager.beginTransaction();
+//    transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
 
     fab1 = findViewById(R.id.fab1);
     fab1.bringToFront();
@@ -111,13 +149,48 @@ public class MainActivity extends AppCompatActivity {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             switch (menuItem.getItemId()) {
               case R.id.place:
-                fragmentState = 1;
-                fragmentPlace = new PlaceFragment(currentTravel, email);
-                transaction.replace(R.id.frameLayout, fragmentPlace).commit();
+
+                compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .retry()
+                        .subscribe(new Consumer<String>() {
+                          @Override
+                          public void accept(String data) throws Exception {
+                            Log.e("user_get_recent_one", data);
+                            currentTravel = data.replace("\"", "");
+                            titleText.setText(currentTravel);
+
+                            fragmentState = 1;
+
+                            fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
+                            transaction.replace(R.id.frameLayout, fragmentPlace).commit();
+                          }
+                        }));
+
+//                fragmentState = 1;
+//                transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel, email.replace("\"", ""))).commit();
                 break;
               case R.id.schedule:
-                fragmentState = 2;
-                transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
+                compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .retry()
+                        .subscribe(new Consumer<String>() {
+                          @Override
+                          public void accept(String data) throws Exception {
+                            Log.e("user_get_recent_one", data);
+                            currentTravel = data.replace("\"", "");
+
+                            fragmentState = 2;
+
+                            fragmentManager = getSupportFragmentManager();
+                            FragmentTransaction transaction = fragmentManager.beginTransaction();
+                            transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
+                          }
+                        }));
                 break;
               case R.id.trip:
                 break;
@@ -125,6 +198,18 @@ public class MainActivity extends AppCompatActivity {
             return true;
           }
         });
+
+    compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .retry()
+            .subscribe(new Consumer<String>() {
+              @Override
+              public void accept(String data) throws Exception {
+                Log.e("user_get_recent_one", data);
+                currentTravel = data.replace("\"", "");
+              }
+            }));
 
   }
 
@@ -211,26 +296,94 @@ public class MainActivity extends AppCompatActivity {
         currentTravel = selectedTravel;
         selectedTravel = null;
 
+        compositeDisposable.add(iAppService.user_set_recent_one(email.replace("\"", ""), currentTravel)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .retry()
+                .subscribe(new Consumer<String>() {
+                  @Override
+                  public void accept(String data) throws Exception {
+                    Log.e("user_set_recent_one", data);
+                  }
+                }));
+
         revealShow(dialogView, false, dialog);
         if (fragmentState == 1) {
+          compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .retry()
+                  .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                      Log.e("user_get_recent_one", data);
+                      currentTravel = data.replace("\"", "");
+                    }
+                  }));
+
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          fragmentPlace = new PlaceFragment(currentTravel, email);
+
+          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
           transaction.replace(R.id.frameLayout, fragmentPlace).commit();
+
         } else {
+          compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .retry()
+                  .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                      Log.e("user_get_recent_one", data);
+                      currentTravel = data.replace("\"", "");
+                    }
+                  }));
+
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel)).commit();
+          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
         }
       }
     });
 
-    for (int i = 0; i < travelList.size(); i++) {
-      adapter.addItem(travelList.get(i));
-    }
-    // adapter add items based, guess based on server response
-    adapter.addItem(new Travel(email, "로마여행", "Rome, Italy", "2015.06.13", "2015.06.21"));
-    adapter.addItem(new Travel(email, "서울여행", "Seoul, Korea", "2018.05.02", "2018.05.05"));
-    adapter.addItem(new Travel(email, "파리여행", "Paris, France", "2019.02.22", "2019.03.05"));
-    adapter.addItem(new Travel(email, "하노이여행", "Hanoi, Vietnam", "2019.10.02", "2019.10.19"));
+    compositeDisposable.add(iAppService.travel_get_all(email.replace("\"", ""))
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .retry()
+            .subscribe(new Consumer<String>() {
+              @Override
+              public void accept(String data) throws Exception {
+                Log.e("travel_get_all", data);
+
+                if (data.equals("0")) {
+                  System.out.println("No data existed");
+                }
+
+                else {
+                  JsonParser jsonParser = new JsonParser();
+                  JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
+
+                  for (int i = 0; i < jsonArray.size(); i++) {
+                    JsonObject object = (JsonObject) jsonArray.get(i);
+
+                    System.out.println(object.get("title"));
+                    System.out.println(object.get("area"));
+                    System.out.println(object.get("start_date"));
+                    System.out.println(object.get("end_date"));
+
+//                    adapter.addItem(new Travel(email, object.get("title").toString().replace("\"", ""), object.get("area").toString().replace("\"", ""),
+//                            object.get("start_date").toString().replace("\"", "").replace("-", "."),
+//                            object.get("end_date").toString().replace("\"", "").replace("-", ".")));
+
+                    travelList.add(new Travel(email, object.get("title").toString().replace("\"", ""), object.get("area").toString().replace("\"", ""),
+                            object.get("start_date").toString().replace("\"", "").replace("-", "."),
+                            object.get("end_date").toString().replace("\"", "").replace("-", ".")));
+
+                    adapter.addItem(travelList.get(travelList.size() - 1));
+                    adapter.notifyDataSetChanged();
+                  }
+                }
+              }
+            }));
 
     ImageView addButton = dialog.findViewById(R.id.imageView3);
     addButton.setOnClickListener(new OnClickListener() {
@@ -342,6 +495,19 @@ public class MainActivity extends AppCompatActivity {
           adapter.addItem(travel);
           travelList.add(travel);
           adapter.notifyDataSetChanged();
+
+          // Insert Travel to the server
+          compositeDisposable.add(iAppService.travel_insert_one(email.replace("\"", ""), travelData[0], travelData[1], travelData[2], travelData[3])
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .retry()
+                  .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                      Log.e("travel_insert_one", data);
+
+                    }
+                  }));
         }
         break;
       case EDIT_TRAVEL_REQUEST:
@@ -358,13 +524,26 @@ public class MainActivity extends AppCompatActivity {
               }
             }
             travelList.add(newTravel);
+
           } else {
             Travel travel = (Travel) intent.getSerializableExtra("travel");
+
             adapter.deleteItem(travel);
             for (int i = 0; i < travelList.size(); i++) {
               if (travelList.get(i).getTitle().equals(travel.getTitle())) {
                 travelList.remove(i);
               }
+
+              compositeDisposable.add(iAppService.travel_delete_one(email.replace("\"", ""), travel.getTitle())
+                      .subscribeOn(Schedulers.io())
+                      .observeOn(AndroidSchedulers.mainThread())
+                      .retry()
+                      .subscribe(new Consumer<String>() {
+                        @Override
+                        public void accept(String data) throws Exception {
+                          Log.e("travel_delete_one", data);
+                        }
+                      }));
             }
           }
           adapter.notifyDataSetChanged();

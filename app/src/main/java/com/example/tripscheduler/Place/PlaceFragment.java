@@ -61,9 +61,11 @@ public class PlaceFragment extends Fragment {
 
   Button uploadButton;
 
-  public PlaceFragment(String email, String title) {
-    this.email = email;
+
+  public PlaceFragment(String title, String email) {
+
     this.title = title;
+    this.email = email;
   }
 
   @Nullable
@@ -90,7 +92,7 @@ public class PlaceFragment extends Fragment {
     PlaceItemDecoration decoration = new PlaceItemDecoration(16);
     mRecyclerView.addItemDecoration(decoration);
 
-    compositeDisposable.add(iAppService.places_get_one("bob@gmail.com", "Trip to Seoul")
+    compositeDisposable.add(iAppService.places_get_one(email, title)
         .subscribeOn(Schedulers.io())
         .observeOn(AndroidSchedulers.mainThread())
         .retry()
@@ -130,69 +132,6 @@ public class PlaceFragment extends Fragment {
           }
         }));
 
-    // TODO dummy data -> should be removed later
-//    Bitmap icon = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.image_test);
-//    TPlaceList.add(new TPlace("PLACE1", "LOCATION1", "LABEL1 intentionally long to make it more important to notice the difference of labelibg", icon));
-//    TPlaceList.add(new TPlace("PLACE2", "LOCATION2", "LABEL2", icon));
-//    TPlaceList.add(new TPlace("PLACE3", "LOCATION3", "LABEL3", icon));
-//    TPlaceList.add(new TPlace("PLACE4", "LOCATION4", "LABEL4", icon));
-//
-//    adapter.notifyDataSetChanged();
-
-    uploadButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        Bitmap icon1 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test);
-        Bitmap icon2 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test2);
-        Bitmap icon3 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test3);
-        Bitmap icon4 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test4);
-        Bitmap icon5 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test5);
-        Bitmap icon6 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test6);
-        Bitmap icon7 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test7);
-        Bitmap icon8 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test8);
-        Bitmap icon9 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test9);
-        Bitmap icon10 = BitmapFactory
-            .decodeResource(getContext().getResources(), R.drawable.image_test10);
-
-        BitmapArithmetic bitmapArithmetic = new BitmapArithmetic();
-        icon1 = BitmapArithmetic.resizeBitmap(icon1);
-        icon2 = bitmapArithmetic.resizeBitmap(icon2);
-        icon3 = bitmapArithmetic.resizeBitmap(icon3);
-        icon4 = bitmapArithmetic.resizeBitmap(icon4);
-        icon5 = bitmapArithmetic.resizeBitmap(icon5);
-        icon6 = bitmapArithmetic.resizeBitmap(icon6);
-        icon7 = bitmapArithmetic.resizeBitmap(icon7);
-        icon8 = bitmapArithmetic.resizeBitmap(icon8);
-        icon9 = bitmapArithmetic.resizeBitmap(icon9);
-        icon10 = bitmapArithmetic.resizeBitmap(icon10);
-
-//        multipartImageUpload(icon1, "bob@gmail.com", "Trip to Seoul", "TPlace Name1", "14.1 112.3", "Label");
-//        multipartImageUpload(icon2, "bob@gmail.com", "Trip to Seoul", "TPlace Name2", "14.12 112.", "Labe2");
-//        multipartImageUpload(icon3, "bob@gmail.com", "Trip to Seoul", "TPlace Name3", "14.12 12.3", "Labe3");
-//        multipartImageUpload(icon4, "bob@gmail.com", "Trip to Seoul", "TPlace Name4", "114.122 12.3", "this is labelsfsafase");
-//        multipartImageUpload(icon5, "bob@gmail.com", "Trip to Seoul", "TPlace Name5", "12.1 6.3", "accommodation");
-//        multipartImageUpload(icon6, "bob@gmail.com", "Trip to Seoul", "TPlace Name6", "14.12 7.3.", "transportation");
-//        multipartImageUpload(icon7, "bob@gmail.com", "Trip to Seoul", "TPlace Name7", "9.12 5.3", "transportation");
-//        multipartImageUpload(icon8, "bob@gmail.com", "Trip to Seoul", "TPlace Name8", "152.122 75.3", "attraction");
-//        multipartImageUpload(icon9, "bob@gmail.com", "Trip to Seoul", "TPlace Name9", "14.1 90.3", "transportation");
-        multipartImageUpload(icon10, "bob@gmail.com", "Trip to Seoul", "TPlace Name10",
-            "1523.12 112.", "attraction");
-
-
-      }
-
-
-    });
-
     return rootView;
   }
 
@@ -205,8 +144,8 @@ public class PlaceFragment extends Fragment {
         .create(IAppService.class);
   }
 
-  private void multipartImageUpload(Bitmap mBitmap, String email, String title, String name,
-      String location, String label) {
+  private void multipartImageUpload(Bitmap mBitmap, String email, String title, final String name,
+      final String location, final String label) {
     try {
       File filesDir = getContext().getFilesDir();
       File file = new File(filesDir, "image" + ".png");
@@ -239,8 +178,13 @@ public class PlaceFragment extends Fragment {
           if (response.code() == 200) {
             Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_SHORT).show();
 
-//            TPlaceList.add(TPlace);
-//            adapter.notifyDataSetChanged();
+            System.out.println(response.toString());
+            System.out.println(name);
+            System.out.println(location);
+            System.out.println(label);
+
+            TPlaceList.add(new TPlace(name, location, label, response.toString()));
+            adapter.notifyDataSetChanged();
           } else {
             Toast.makeText(getContext(), "Error : " + response.code(), Toast.LENGTH_SHORT).show();
           }
@@ -263,5 +207,6 @@ public class PlaceFragment extends Fragment {
 
     multipartImageUpload(image, title, email.replace("\"", ""), name, strLatLng, label);
   }
+
 
 }
