@@ -13,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.example.tripscheduler.Place.Place;
 import com.example.tripscheduler.R;
 import com.example.tripscheduler.Server.IAppService;
 import com.example.tripscheduler.Server.RetrofitClient;
