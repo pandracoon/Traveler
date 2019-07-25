@@ -7,6 +7,12 @@
     android:title="Optimize"
     android:icon="@drawable/outline_star_black_18"
     app:showAsAction="always"/>
+
+  <item
+    android:id="@+id/map"
+    android:title="Map"
+    android:icon="@drawable/baseline_place_black_18dp"
+    app:showAsAction="always"/>
   
   <item
     android:id="@+id/addSchedule"

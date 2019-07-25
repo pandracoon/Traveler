@@ -38,6 +38,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.tripscheduler.Place.PlaceAddMenuActivity;
 import com.example.tripscheduler.Place.PlaceFragment;
+import com.example.tripscheduler.Place.PlaceMapActivity;
 import com.example.tripscheduler.Place.TPlace;
 import com.example.tripscheduler.Schedule.Schedule;
 import com.example.tripscheduler.Schedule.ScheduleAddActivity;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
   private ScheduleFragment fragmentSchedule;
   FloatingActionButton fab1;
   FloatingActionButton fab2;
-  String currentTravel = "Trip to Seoul";
+  String currentTravel;
   String selectedTravel;
   int fragmentState;
   TravelListViewAdapter adapter;
@@ -111,8 +112,7 @@ public class MainActivity extends AppCompatActivity {
     mainToolBar = findViewById(R.id.mainToolBar);
     mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(mainToolBar);
-    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
+
 
     titleText = findViewById(R.id.titleTextView);
 
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
           public void accept(String data) throws Exception {
             Log.e("user_get_recent_one", data);
             currentTravel = data.replace("\"", "");
-            titleText.setText(currentTravel);
+            getSupportActionBar().setTitle(currentTravel);
 
             fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
                       public void accept(String data) throws Exception {
                         Log.e("user_get_recent_one", data);
                         currentTravel = data.replace("\"", "");
-                        titleText.setText(currentTravel);
+                        getSupportActionBar().setTitle(currentTravel);
 
                         fragmentState = 1;
 
@@ -248,60 +248,12 @@ public class MainActivity extends AppCompatActivity {
 //    outMenu.close();
 //    outMenu.clear();
 
-    mainToolBar.setVisibility(View.GONE);
-    Toolbar tripToolbar = dialog.findViewById(R.id.tripToolBar);
-    tripToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-    setSupportActionBar(tripToolbar);
-    getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     ListView tripListView = dialog.findViewById(R.id.tripListView);
-//    SwipeMenuListView tripListView = dialog.findViewById(R.id.tripListView);
+
     adapter = new TravelListViewAdapter();
 
     tripListView.setAdapter(adapter);
-
-//    SwipeMenuCreator creator = new SwipeMenuCreator() {
-//      @Override
-//      public void create(SwipeMenu menu) {
-//        SwipeMenuItem editItem = new SwipeMenuItem(getApplicationContext());
-//        // set item background
-//        editItem.setBackground(new ColorDrawable(Color.parseColor("#2196F3")));
-//        // set item width
-//        editItem.setWidth(170);
-//        // set a icon
-//        editItem.setIcon(R.drawable.edit_icon);
-//        // add to menu
-//        menu.addMenuItem(editItem);
-//
-//        SwipeMenuItem deleteItem = new SwipeMenuItem(getApplicationContext());
-//        // set item background
-//        deleteItem.setBackground(new ColorDrawable(Color.RED));
-//        // set item width
-//        deleteItem.setWidth(170);
-//        // set a icon
-//        deleteItem.setIcon(R.drawable.delete_icon);
-//        // add to menu
-//        menu.addMenuItem(deleteItem);
-//      }
-//    };
-//
-//    tripListView.setMenuCreator(creator);
-//
-//    tripListView.setOnMenuItemClickListener(new OnMenuItemClickListener() {
-//      @Override
-//      public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
-//        switch (index) {
-//          case 0:
-//            Log.e("dd", "onMenuItemClick: clicked item " + index);
-//            break;
-//          case 1:
-//            Log.e("dd", "onMenuItemClick: clicked item " + index);
-//            break;
-//        }
-//        // false : close the menu; true : not close the menu
-//        return false;
-//      }
-//    });
 
     tripListView.setOnItemClickListener(new OnItemClickListener() {
       @Override
@@ -320,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
               .show();
           return;
         }
-        titleText.setText(selectedTravel);
+        getSupportActionBar().setTitle(selectedTravel);
         currentTravel = selectedTravel;
         selectedTravel = null;
 
@@ -429,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        mainToolBar.setVisibility(View.VISIBLE);
+
         revealShow(dialogView, false, dialog);
       }
     });
@@ -447,7 +399,6 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
-          mainToolBar.setVisibility(View.VISIBLE);
           revealShow(dialogView, false, dialog);
           return true;
         }
@@ -727,6 +678,13 @@ public class MainActivity extends AppCompatActivity {
         scheduleOptimizeIntent.putExtra("title",currentTravel);
         startActivityForResult(scheduleOptimizeIntent,OPTIMIZE_SCHEDULE_REQUEST);
         break;
+      case R.id.map:
+        if(fragmentState == 1){
+          Intent placeMapIntent = new Intent(this, PlaceMapActivity.class);
+          placeMapIntent.putExtra("email",email);
+          placeMapIntent.putExtra("title",currentTravel);
+          startActivity(placeMapIntent);
+        }
     }
     return true;
   }

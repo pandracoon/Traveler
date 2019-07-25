@@ -1,10 +1,13 @@
 package com.example.tripscheduler.Schedule;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -14,8 +17,6 @@ import androidx.fragment.app.Fragment;
 import com.example.tripscheduler.R;
 import com.example.tripscheduler.Server.IAppService;
 import com.example.tripscheduler.Server.RetrofitClient;
-import com.example.tripscheduler.Travel.Travel;
-import com.example.tripscheduler.Travel.TravelListViewAdapter;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -26,6 +27,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import java.util.Collections;
 import retrofit2.Retrofit;
 
 public class ScheduleViewPagerFragment extends Fragment {
@@ -71,10 +73,10 @@ public class ScheduleViewPagerFragment extends Fragment {
         scheduleList = new ArrayList<>();
 
         // guess, should add Schedule items here <- currently it's just travel, but should manage later :P
-        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "6 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "7 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "8 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "15 00", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "\"6 00\"", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "\"7 00\"", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "\"8 00\"", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "\"15 00\"", "30"));
 
         compositeDisposable.add(iAppService.schedule_get_one(email.replace("\"", ""), title)
                 .subscribeOn(Schedulers.io())
@@ -117,6 +119,7 @@ public class ScheduleViewPagerFragment extends Fragment {
                                         scheduleList.add(new Schedule(email, title, object2.get("name").toString(), object2.get("location").toString(),
                                                 object2.get("label").toString(), object2.get("memo").toString(), object2.get("start").toString(),
                                                 object2.get("duration").toString()));
+                                        Collections.sort(scheduleList);
 
                                         adapter.notifyDataSetChanged();
                                     }
@@ -129,6 +132,17 @@ public class ScheduleViewPagerFragment extends Fragment {
 
         adapter = new ScheduleListViewAdapter(scheduleList);
         scheduleListView.setAdapter(adapter);
+        scheduleListView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+                Schedule schedule = (Schedule) parent.getItemAtPosition(position);
+
+                Intent scheduleMapIntent = new Intent(getActivity(), ScheduleVertexMapActivity.class);
+                scheduleMapIntent.putExtra("schedule",schedule);
+                startActivity(scheduleMapIntent);
+
+            }
+        });
 
         return rootView;
     }
