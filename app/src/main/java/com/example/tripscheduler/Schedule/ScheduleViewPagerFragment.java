@@ -71,10 +71,10 @@ public class ScheduleViewPagerFragment extends Fragment {
         scheduleList = new ArrayList<>();
 
         // guess, should add Schedule items here <- currently it's just travel, but should manage later :P
-        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "6 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "7 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "8 00", "30"));
-        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "15 00", "30"));
+//        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "6 00", "30"));
+//        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "7 00", "30"));
+//        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "8 00", "30"));
+//        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "15 00", "30"));
 
         compositeDisposable.add(iAppService.schedule_get_one(email.replace("\"", ""), title)
                 .subscribeOn(Schedulers.io())

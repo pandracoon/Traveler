@@ -45,6 +45,7 @@ import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Schedule.ScheduleOptimizeActivity;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
+import com.example.tripscheduler.Server.Model;
 import com.example.tripscheduler.Server.RetrofitClient;
 import com.example.tripscheduler.Server.StringConversion;
 import com.example.tripscheduler.Travel.Travel;
@@ -59,12 +60,23 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.example.tripscheduler.Server.StringConversion.arrayListToString_1;
+import static com.example.tripscheduler.Server.StringConversion.arrayListToString_2;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -96,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
   String email;
 
   Integer day;
+
+  int currentCount = 0;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -615,34 +629,7 @@ public class MainActivity extends AppCompatActivity {
       case ADD_SCHEDULE_REQUEST:
 
         if (resultCode == RESULT_OK) {
-//          mainToolBar = findViewById(R.id.mainToolBar);
-//          mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-//          setSupportActionBar(mainToolBar);
-//          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//          getSupportActionBar().setDisplayShowTitleEnabled(false);
-//          mainToolBar.setVisibility(View.VISIBLE);
-
           Schedule schedule = (Schedule) intent.getSerializableExtra("schedule");
-
-//          if (fragmentSchedule.currentTabPostion() == null) {
-//            day = 0;
-//          }
-//
-//          else {
-//            day = fragmentSchedule.currentTabPostion();
-//          }
-
-          System.out.println(email);
-          System.out.println(currentTravel);
-          System.out.println(day.toString());
-          System.out.println(schedule.getData("name"));
-          System.out.println(
-              schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "")
-                  .replace(",", " "));
-          System.out.println(schedule.getData("label"));
-          System.out.println(schedule.getData("memo"));
-          System.out.println(schedule.getData("start"));
-          System.out.println(schedule.getData("duration"));
 
           compositeDisposable.add(iAppService
               .schedule_insert_one(email.replace("\"", ""), currentTravel, day.toString(),
@@ -666,11 +653,214 @@ public class MainActivity extends AppCompatActivity {
 
       case OPTIMIZE_SCHEDULE_REQUEST:
         if(resultCode == RESULT_OK){
-          ArrayList<TPlace> placeList = (ArrayList<TPlace>)intent.getSerializableExtra("placeList");
-          ArrayList<Integer> timeList = intent.getIntegerArrayListExtra("timeList");
+          final ArrayList<TPlace> placeList = (ArrayList<TPlace>)intent.getSerializableExtra("placeList");
+          final ArrayList<Integer> timeList = intent.getIntegerArrayListExtra("timeList");
           System.out.println(placeList);
           System.out.println(timeList);
 
+          // DO IT HERE
+          compositeDisposable.add(iAppService.schedule_get_one(email.replace("\"", ""), currentTravel)
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .retry()
+                  .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                      Log.e("schedule_get_one", data);
+
+                      if (data.equals("0")) {
+                        System.out.println("No data existed");
+                      }
+
+                      else {
+
+                        JsonParser jsonParser = new JsonParser();
+                        JsonArray tempArray = (JsonArray) jsonParser.parse(data);
+
+                        Integer day = fragmentSchedule.currentTabPostion();
+
+                        JsonObject jsonObject = (JsonObject) tempArray.get(day);
+                        final JsonArray jsonArray = (JsonArray) jsonObject.get("schedule");
+
+                        final int size = jsonArray.size();
+
+                        final Integer[][] array = new Integer[size + timeList.size()][size + timeList.size()];
+
+                        // Key Points Duration
+                        for (int i = 0; i < size; i ++) {
+                          JsonObject object = (JsonObject) jsonArray.get(i);
+                          array[i][i] = Integer.parseInt(object.get("duration").toString().replace("\"", "")) * 60;
+                          System.out.println(array[i][i]);
+                        }
+
+                        // Places Duration
+                        for (int i = size; i < size + timeList.size(); i ++) {
+                          array[i][i] = timeList.get(i - size) * 60;
+                          System.out.println(array[i][i]);
+                        }
+
+                        // Rest Weights
+                        String base_url = "https://maps.googleapis.com/";
+
+                        Retrofit retrofit = new Retrofit.Builder()
+                                .baseUrl(base_url)
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+
+                        IAppService request = retrofit.create(IAppService.class);
+
+                        final int maxCount = (size + timeList.size()) * (size + timeList.size()) - (size + timeList.size());
+
+                        for (int i = 0; i < size + timeList.size(); i ++) {
+                          for (int j = 0; j < size + timeList.size(); j ++) {
+                            if (i == j) {
+                              continue;
+                            }
+
+                            final int temp_i = i;
+                            final int temp_j = j;
+
+                            String origin = "41.2198254,16.3076254";
+                            String dest = "41.2199,16.3062";
+
+                            if (i < size) {
+                              JsonObject temp = (JsonObject) jsonArray.get(i);
+                              origin = temp.get("location").toString().split("\"")[1] + "," + temp.get("location").toString().split("\"")[3];
+                              System.out.println("schedule origin");
+                              System.out.println(origin);
+                            }
+                            else {
+                              origin = placeList.get(i - size).getData("location").split("\"")[1] + "," + placeList.get(i - size).getData("location").split("\"")[3];
+                              System.out.println("place origin");
+                              System.out.println(origin);
+                            }
+
+                            if (j < size) {
+                              JsonObject temp = (JsonObject) jsonArray.get(j);
+                              dest = temp.get("location").toString().split("\"")[1] + "," + temp.get("location").toString().split("\"")[3];;
+                              System.out.println("schedule dest");
+                              System.out.println(dest);
+                            }
+                            else {
+                              dest = placeList.get(j - size).getData("location").split("\"")[1] + "," + placeList.get(j - size).getData("location").split("\"")[3];
+                              System.out.println("place dest");
+                              System.out.println(dest);
+                            }
+
+                            String key = "AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA";
+
+                            Call<Model.DirectionResults> req = request.getJson(origin, dest, key, "transit");
+                            req.enqueue(new Callback<Model.DirectionResults>() {
+                              @Override
+                              public void onResponse(Call<Model.DirectionResults> call, Response<Model.DirectionResults> response) {
+                                Log.d("CallBack", " response is " + response);
+                                Model.Route route = response.body().getRoutes().get(0);
+                                Model.Legs leg = route.getLegses().get(0);
+
+                                Integer weight = leg.getDuration().getValue();
+
+                                array[temp_i][temp_j] = weight;
+
+                                for (int j = 0; j < response.body().getRoutes().size(); j ++) {
+                                  for (int i = 0; i < response.body().getRoutes().get(j).getLegses().size(); i++) {
+                                    System.out.println(route.getLegses().get(i).getDistance().getText());
+                                    System.out.println(route.getLegses().get(i).getDistance().getValue());
+                                    System.out.println(route.getLegses().get(i).getDuration().getText());
+                                    System.out.println(route.getLegses().get(i).getDuration().getValue());
+                                  }
+                                }
+
+                                System.out.println("Coordinate : ");
+                                System.out.println(temp_i);
+                                System.out.println(temp_j);
+
+                                currentCount = currentCount + 1;
+
+                                if (currentCount == maxCount) {
+                                    System.out.println("It's almost an end game");
+
+                                    currentCount = 0;
+
+                                    // Convert Array to ArrayList
+                                    ArrayList<ArrayList<Integer>> arrayList = new ArrayList<>();
+                                    for (Integer[] ints : array) {
+                                      ArrayList<Integer> list = new ArrayList<>();
+                                      for (int i : ints) {
+                                        list.add(i);
+                                      }
+                                      arrayList.add(list);
+                                    }
+
+                                    System.out.println(arrayList);
+
+                                    // Request Optimization
+                                    Integer totalLength = size + timeList.size();
+                                    String graph = arrayListToString_2(arrayList);
+
+                                    ArrayList<Integer> limitsList = new ArrayList<>();
+
+                                    for (int i = 0; i < size - 1; i ++) {
+                                      JsonObject object = (JsonObject) jsonArray.get(i);
+                                      JsonObject object2 = (JsonObject) jsonArray.get(i + 1);
+
+                                      String tempTime1 = object.get("start").toString().split(" ")[0].split("\"")[1];
+                                      String tempMinute1 = object.get("start").toString().split(" ")[1].split("\"")[0];
+                                      Integer startTime1 = (Integer.parseInt(tempTime1) * 60 + Integer.parseInt(tempMinute1)) * 60;
+
+                                      String tempTime2 = object2.get("start").toString().split(" ")[0].split("\"")[1];
+                                      String tempMinute2 = object2.get("start").toString().split(" ")[1].split("\"")[0];
+                                      Integer startTime2 = (Integer.parseInt(tempTime2) * 60 + Integer.parseInt(tempMinute2)) * 60;
+
+                                      limitsList.add(startTime2 - startTime1);
+
+                                      System.out.println(startTime2 - startTime1);
+                                    }
+
+                                    String limits = arrayListToString_1(limitsList);
+
+                                    String keyPoints = Integer.toString(size);
+
+                                    System.out.println(totalLength.toString());
+                                    System.out.println(graph);
+                                    System.out.println(limits);
+                                    System.out.println(keyPoints);
+
+                                    compositeDisposable.add(iAppService.schedule_optimize(totalLength.toString(), graph, limits, keyPoints)
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .retry()
+                                            .subscribe(new Consumer<String>() {
+                                              @Override
+                                              public void accept(String data) throws Exception {
+                                                Log.e("schedule_optimize", data);
+
+                                                JsonParser jsonParser = new JsonParser();
+                                                JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
+
+                                                for (int i = 0; i < jsonArray.size(); i ++) {
+                                                  JsonArray array = (JsonArray) jsonArray.get(i);
+                                                  System.out.println((i + 1)  + " th path");
+
+                                                  for (int j = 0; j < array.size(); j ++) {
+                                                    System.out.println(array.get(j));
+                                                  }
+                                                }
+                                              }
+                                            }));
+                                  }
+
+                              }
+
+                              @Override
+                              public void onFailure(Call<Model.DirectionResults> call, Throwable t) {
+                                Log.d("CallBack", " Throwable is " +t);
+                              }
+                            });
+                          }
+                        }
+                      }
+                    }
+                  }));
         }
 
         break;

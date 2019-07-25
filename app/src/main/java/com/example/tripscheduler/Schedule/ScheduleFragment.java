@@ -161,7 +161,6 @@ public class ScheduleFragment extends Fragment {
         Call<Model.DirectionResults> req = reqinterface.getJson(origin, dest, key, "transit");
 
         req.enqueue(new Callback<Model.DirectionResults>() {
-
           @Override
           public void onResponse(Call<Model.DirectionResults> call, Response<Model.DirectionResults> response) {
             Log.d("CallBack", " response is " + response);
