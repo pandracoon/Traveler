@@ -44,6 +44,7 @@ import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
 import com.example.tripscheduler.Server.RetrofitClient;
+import com.example.tripscheduler.Server.StringConversion;
 import com.example.tripscheduler.Travel.Travel;
 import com.example.tripscheduler.Travel.TravelAddActivity;
 import com.example.tripscheduler.Travel.TravelEditActivity;
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
   String email;
 
+  Integer day;
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -123,7 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
             fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
+            fragmentSchedule=new ScheduleFragment(currentTravel, email);
+            transaction.add(R.id.frameLayout,fragmentSchedule).commit();
           }
         }));
 
@@ -196,9 +200,10 @@ public class MainActivity extends AppCompatActivity {
 
                         fragmentManager = getSupportFragmentManager();
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        fragmentSchedule =  new ScheduleFragment(currentTravel, email);
+
                         transaction
-                            .replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email))
-                            .commit();
+                            .replace(R.id.frameLayout, fragmentSchedule).commit();
                         MenuItem item = outMenu.findItem(R.id.optimize);
                         item.setVisible(true);
                       }
@@ -233,7 +238,14 @@ public class MainActivity extends AppCompatActivity {
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
     dialog.setContentView(dialogView);
 
-    mainToolBar.setVisibility(View.INVISIBLE);
+//    MenuItem item = outMenu.findItem(R.id.optimize);
+//    MenuItem item2 = outMenu.findItem(R.id.addSchedule);
+//    item.setVisible(false);
+//    item2.setVisible(false);
+//    outMenu.close();
+//    outMenu.clear();
+
+    mainToolBar.setVisibility(View.GONE);
     Toolbar tripToolbar = dialog.findViewById(R.id.tripToolBar);
     tripToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(tripToolbar);
@@ -354,7 +366,8 @@ public class MainActivity extends AppCompatActivity {
               }));
 
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email))
+          fragmentSchedule =  new ScheduleFragment(currentTravel, email);
+          transaction.replace(R.id.frameLayout, fragmentSchedule)
               .commit();
         }
       }
@@ -458,6 +471,7 @@ public class MainActivity extends AppCompatActivity {
 
   private void revealShow(View dialogView, boolean b, final Dialog dialog) {
 
+
     final View view = dialogView.findViewById(R.id.dialog1);
 
     int w = view.getWidth();
@@ -492,6 +506,11 @@ public class MainActivity extends AppCompatActivity {
       anim.setDuration(400);
       anim.start();
     }
+
+//    MenuItem item = outMenu.findItem(R.id.optimize);
+//    MenuItem item2 = outMenu.findItem(R.id.addSchedule);
+//    item.setVisible(true);
+//    item2.setVisible(true);
 
   }
 
@@ -594,7 +613,47 @@ public class MainActivity extends AppCompatActivity {
       case ADD_SCHEDULE_REQUEST:
 
         if(resultCode == RESULT_OK){
+//          mainToolBar = findViewById(R.id.mainToolBar);
+//          mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//          setSupportActionBar(mainToolBar);
+//          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//          getSupportActionBar().setDisplayShowTitleEnabled(false);
+//          mainToolBar.setVisibility(View.VISIBLE);
+
           Schedule schedule = (Schedule)intent.getSerializableExtra("schedule");
+
+
+
+//          if (fragmentSchedule.currentTabPostion() == null) {
+//            day = 0;
+//          }
+//
+//          else {
+//            day = fragmentSchedule.currentTabPostion();
+//          }
+
+          System.out.println(email);
+          System.out.println(currentTravel);
+          System.out.println(day.toString());
+          System.out.println(schedule.getData("name"));
+          System.out.println(schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "").replace(",", " "));
+          System.out.println(schedule.getData("label"));
+          System.out.println(schedule.getData("memo"));
+          System.out.println(schedule.getData("start"));
+          System.out.println(schedule.getData("duration"));
+
+          compositeDisposable.add(iAppService.schedule_insert_one(email.replace("\"", ""), currentTravel, day.toString(), schedule.getData("name"),
+                  schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "").replace(",", " "),
+                  schedule.getData("label"), schedule.getData("memo"), schedule.getData("start"), schedule.getData("duration"))
+                  .subscribeOn(Schedulers.io())
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .retry()
+                  .subscribe(new Consumer<String>() {
+                    @Override
+                    public void accept(String data) throws Exception {
+                      Log.e("schedule_insert_one", data);
+                    }
+                  }));
 
         }
         break;
@@ -637,6 +696,13 @@ public class MainActivity extends AppCompatActivity {
           Intent scheduleAddIntent = new Intent(this, ScheduleAddActivity.class);
           scheduleAddIntent.putExtra("email",email);
           scheduleAddIntent.putExtra("title",currentTravel);
+          if (fragmentSchedule == null)
+          {
+            day = 0;
+          }
+          else {
+            day = fragmentSchedule.currentTabPostion();
+          }
           startActivityForResult(scheduleAddIntent, ADD_SCHEDULE_REQUEST);
         }
         break;

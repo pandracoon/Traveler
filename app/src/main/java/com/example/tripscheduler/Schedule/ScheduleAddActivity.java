@@ -63,7 +63,6 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
 
   GoogleMap gMap;
 
-  IAppService apiService;
   private final String SERVER = "http://143.248.36.205:3000";
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
   private IAppService iAppService;
@@ -77,8 +76,6 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
 
     Retrofit retrofitClient = RetrofitClient.getInstance();
     iAppService = retrofitClient.create(IAppService.class);
-
-    initRetrofitClient();
 
     email = getIntent().getStringExtra("email");
     title = getIntent().getStringExtra("title");
@@ -157,8 +154,6 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
       }
     });
 
-    memo = memoEditText.getText().toString();
-
     scheduleButton.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View view) {
@@ -167,6 +162,8 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
 
         int endMin = Integer.parseInt(endTime.split(":")[0]) * 60 + Integer
             .parseInt(endTime.split(":")[1]);
+
+        memo = memoEditText.getText().toString();
 
         Integer duration = endMin - startMin;
         if (duration < 0) {
@@ -180,21 +177,12 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
         Intent intent = new Intent();
         intent.putExtra("schedule", schedule);
         setResult(RESULT_OK, intent);
-
+        finish();
 
       }
 
     });
 
-  }
-
-  private void initRetrofitClient() {
-    OkHttpClient client = new OkHttpClient.Builder().build();
-    apiService = new Retrofit.Builder()
-        .baseUrl(SERVER + "/")
-        .client(client)
-        .build()
-        .create(IAppService.class);
   }
 
   @Override
@@ -207,6 +195,14 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
       googleMap.setMinZoomPreference(15.0f);
     }
   }
+
+//  @Override
+//  public void onBackPressed() {
+//    toolbar.setVisibility(View.GONE);
+//
+//    getSupportActionBar().hide();
+//    super.onBackPressed();
+//  }
 
   @Override
   public boolean onOptionsItemSelected(
@@ -239,7 +235,7 @@ public class ScheduleAddActivity extends AppCompatActivity implements OnMapReady
           name = selectedPlace.getData("name").replace("\"", "");
           nameTextView.setText(name);
           type = selectedPlace.getData("label").replace("\"", "");
-          ;
+
           typeTextView.setText(type);
           strLatLng = selectedPlace.getData("location");
           String lat = strLatLng.split("\"")[1];

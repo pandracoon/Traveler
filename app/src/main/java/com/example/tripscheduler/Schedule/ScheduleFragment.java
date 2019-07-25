@@ -49,6 +49,8 @@ public class ScheduleFragment extends Fragment {
 
   final int SCROLLABLE_MINIMUM = 7;
 
+  int temp;
+
   public ScheduleFragment(String title, String email) {
     this.title = title;
     this.email = email;
@@ -122,6 +124,7 @@ public class ScheduleFragment extends Fragment {
       @Override
       public void onTabSelected(TabLayout.Tab tab) {
 
+        temp = tab.getPosition();
         viewPager.setCurrentItem(tab.getPosition());
       }
 
@@ -186,5 +189,9 @@ public class ScheduleFragment extends Fragment {
     });
 
     return rootView;
+  }
+
+  public Integer currentTabPostion(){
+    return temp;
   }
 }

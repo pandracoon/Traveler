@@ -50,10 +50,6 @@ public class ScheduleListViewAdapter extends BaseAdapter {
 
         String startTime;
 
-        System.out.println("asddsa");
-        System.out.println(Integer.parseInt(schedule.getData("start").replace("\"", "").split(" ")[0]));
-        System.out.println("asd");
-
         if (Integer.parseInt(schedule.getData("start").replace("\"", "").split(" ")[0]) <= 12)
         {
             startTime = schedule.getData("start").replace("\"", "").split(" ")[0] + ":"
