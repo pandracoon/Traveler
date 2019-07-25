@@ -41,6 +41,7 @@ import com.example.tripscheduler.Place.PlaceFragment;
 import com.example.tripscheduler.Schedule.Schedule;
 import com.example.tripscheduler.Schedule.ScheduleAddActivity;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
+import com.example.tripscheduler.Schedule.ScheduleOptimizeActivity;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
 import com.example.tripscheduler.Server.RetrofitClient;
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
   public static final int EDIT_TRAVEL_REQUEST = 2;
   public static final int ADD_PLACE_REQUEST = 3;
   public static final int ADD_SCHEDULE_REQUEST = 4;
+  public static final int OPTIMIZE_SCHEDULE_REQUEST = 5;
 
   private final String SERVER = "http://143.248.36.205:3000";
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -126,8 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
             fragmentManager = getSupportFragmentManager();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
-            fragmentSchedule=new ScheduleFragment(currentTravel, email);
-            transaction.add(R.id.frameLayout,fragmentSchedule).commit();
+            fragmentSchedule = new ScheduleFragment(currentTravel, email);
+            transaction.add(R.id.frameLayout, fragmentSchedule).commit();
           }
         }));
 
@@ -200,7 +202,7 @@ public class MainActivity extends AppCompatActivity {
 
                         fragmentManager = getSupportFragmentManager();
                         FragmentTransaction transaction = fragmentManager.beginTransaction();
-                        fragmentSchedule =  new ScheduleFragment(currentTravel, email);
+                        fragmentSchedule = new ScheduleFragment(currentTravel, email);
 
                         transaction
                             .replace(R.id.frameLayout, fragmentSchedule).commit();
@@ -366,7 +368,7 @@ public class MainActivity extends AppCompatActivity {
               }));
 
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          fragmentSchedule =  new ScheduleFragment(currentTravel, email);
+          fragmentSchedule = new ScheduleFragment(currentTravel, email);
           transaction.replace(R.id.frameLayout, fragmentSchedule)
               .commit();
         }
@@ -470,7 +472,6 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void revealShow(View dialogView, boolean b, final Dialog dialog) {
-
 
     final View view = dialogView.findViewById(R.id.dialog1);
 
@@ -612,7 +613,7 @@ public class MainActivity extends AppCompatActivity {
 
       case ADD_SCHEDULE_REQUEST:
 
-        if(resultCode == RESULT_OK){
+        if (resultCode == RESULT_OK) {
 //          mainToolBar = findViewById(R.id.mainToolBar);
 //          mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
 //          setSupportActionBar(mainToolBar);
@@ -620,9 +621,7 @@ public class MainActivity extends AppCompatActivity {
 //          getSupportActionBar().setDisplayShowTitleEnabled(false);
 //          mainToolBar.setVisibility(View.VISIBLE);
 
-          Schedule schedule = (Schedule)intent.getSerializableExtra("schedule");
-
-
+          Schedule schedule = (Schedule) intent.getSerializableExtra("schedule");
 
 //          if (fragmentSchedule.currentTabPostion() == null) {
 //            day = 0;
@@ -636,26 +635,35 @@ public class MainActivity extends AppCompatActivity {
           System.out.println(currentTravel);
           System.out.println(day.toString());
           System.out.println(schedule.getData("name"));
-          System.out.println(schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "").replace(",", " "));
+          System.out.println(
+              schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "")
+                  .replace(",", " "));
           System.out.println(schedule.getData("label"));
           System.out.println(schedule.getData("memo"));
           System.out.println(schedule.getData("start"));
           System.out.println(schedule.getData("duration"));
 
-          compositeDisposable.add(iAppService.schedule_insert_one(email.replace("\"", ""), currentTravel, day.toString(), schedule.getData("name"),
-                  schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "").replace(",", " "),
-                  schedule.getData("label"), schedule.getData("memo"), schedule.getData("start"), schedule.getData("duration"))
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .retry()
-                  .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String data) throws Exception {
-                      Log.e("schedule_insert_one", data);
-                    }
-                  }));
+          compositeDisposable.add(iAppService
+              .schedule_insert_one(email.replace("\"", ""), currentTravel, day.toString(),
+                  schedule.getData("name"),
+                  schedule.getData("location").replace("\"", "").replace("[", "").replace("]", "")
+                      .replace(",", " "),
+                  schedule.getData("label"), schedule.getData("memo"), schedule.getData("start"),
+                  schedule.getData("duration"))
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .retry()
+              .subscribe(new Consumer<String>() {
+                @Override
+                public void accept(String data) throws Exception {
+                  Log.e("schedule_insert_one", data);
+                }
+              }));
 
         }
+        break;
+
+      case OPTIMIZE_SCHEDULE_REQUEST:
         break;
     }
   }
@@ -694,19 +702,21 @@ public class MainActivity extends AppCompatActivity {
 
         } else if (fragmentState == 2) {
           Intent scheduleAddIntent = new Intent(this, ScheduleAddActivity.class);
-          scheduleAddIntent.putExtra("email",email);
-          scheduleAddIntent.putExtra("title",currentTravel);
-          if (fragmentSchedule == null)
-          {
+          scheduleAddIntent.putExtra("email", email);
+          scheduleAddIntent.putExtra("title", currentTravel);
+          if (fragmentSchedule == null) {
             day = 0;
-          }
-          else {
+          } else {
             day = fragmentSchedule.currentTabPostion();
           }
           startActivityForResult(scheduleAddIntent, ADD_SCHEDULE_REQUEST);
         }
         break;
       case R.id.optimize:
+        Intent scheduleOptimizeIntent = new Intent(this, ScheduleOptimizeActivity.class);
+        scheduleOptimizeIntent.putExtra("email",email);
+        scheduleOptimizeIntent.putExtra("title",currentTravel);
+        startActivityForResult(scheduleOptimizeIntent,OPTIMIZE_SCHEDULE_REQUEST);
         break;
     }
     return true;
