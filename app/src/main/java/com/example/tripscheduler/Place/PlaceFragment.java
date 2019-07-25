@@ -2,6 +2,7 @@ package com.example.tripscheduler.Place;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener;
@@ -25,6 +27,7 @@ import com.example.tripscheduler.R;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
 import com.example.tripscheduler.Server.RetrofitClient;
+import com.example.tripscheduler.Travel.Travel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -49,6 +52,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import static android.app.Activity.RESULT_OK;
 
 public class PlaceFragment extends Fragment {
 
@@ -124,32 +129,23 @@ public class PlaceFragment extends Fragment {
         PlaceItemDecoration decoration = new PlaceItemDecoration(16);
         mRecyclerView.addItemDecoration(decoration);
 
-        mRecyclerView.addOnItemTouchListener(new OnItemTouchListener() {
+        mRecyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getContext(), mRecyclerView, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public boolean onInterceptTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            public void onItemClick(View view, int position) {
+                Log.e("hi", "hi");
 
-                Log.e("d","D");
-                View child = rv.findChildViewUnder(e.getX(), e.getY());
-                int position = rv.getChildAdapterPosition(child);
                 TPlace place = TPlaceList.get(position);
 
                 Intent intent = new Intent(mContext, PlaceInfoActivity.class);
                 intent.putExtra("place", place);
                 startActivityForResult(intent, INFO_REQUEST);
-
-                return false;
             }
 
             @Override
-            public void onTouchEvent(@NonNull RecyclerView rv, @NonNull MotionEvent e) {
+            public void onLongItemClick(View view, final int position) {
 
             }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
+        }));
 
         compositeDisposable.add(iAppService.places_get_one(email, title)
                 .subscribeOn(Schedulers.io())
@@ -280,5 +276,100 @@ public class PlaceFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case INFO_REQUEST:
+                if (resultCode == RESULT_OK) {
+
+                    int state = data.getIntExtra("state", 0);
+
+                    if (state == 0) {
+                        Log.e("ERROR", "error");
+                    } else if (state == 1) {
+                        TPlace place = (TPlace) data.getSerializableExtra("place");
+                        TPlace newPlace = (TPlace) data.getSerializableExtra("newPlace");
+
+                        for(int i= TPlaceList.size()-1; i>=0; i--) {
+                            System.out.println(TPlaceList.get(i).getData("name"));
+                            System.out.println(place.getData("name"));
+                            System.out.println(TPlaceList.get(i).getData("location"));
+                            System.out.println(place.getData("location"));
+                            System.out.println(TPlaceList.get(i).getData("label"));
+                            System.out.println(place.getData("label"));
+
+                            if(TPlaceList.get(i).getData("name").equals(place.getData("name")) &&
+                                    TPlaceList.get(i).getData("location").equals(place.getData("location")) &&
+                                    TPlaceList.get(i).getData("label").equals(place.getData("label"))) {
+                                System.out.println("asd");
+
+                                TPlaceList.remove(i);
+                            }
+                            else {
+                            }
+                        }
+
+                        TPlaceList.add(newPlace);
+
+                        compositeDisposable.add(iAppService.place_update_one(email.replace("\"", ""), title,
+                                place.getData("name").replace("\"", ""),
+                                place.getData("location").split("\"")[1] + " " + place.getData("location").split("\"")[3],
+                                place.getData("label").replace("\"", ""),
+                                newPlace.getData("name").replace("\"", ""),
+                                newPlace.getData("location").split("\"")[1] + " " + newPlace.getData("location").split("\"")[3],
+                                newPlace.getData("label").replace("\"", ""))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .retry()
+                                .subscribe(new Consumer<String>() {
+                                    @Override
+                                    public void accept(String data) throws Exception {
+                                        Log.e("travel_insert_one", data);
+
+                                        adapter.notifyDataSetChanged();
+
+                                    }
+                                }));
+
+                    } else if (state == 2) {
+                        TPlace place = (TPlace) data.getSerializableExtra("place");
+
+                        for(int i= TPlaceList.size()-1; i>=0; i--) {
+                            System.out.println(TPlaceList.get(i).getData("name"));
+                            System.out.println(place.getData("name"));
+                            System.out.println(TPlaceList.get(i).getData("location"));
+                            System.out.println(place.getData("location"));
+                            System.out.println(TPlaceList.get(i).getData("label"));
+                            System.out.println(place.getData("label"));
+
+                            if(TPlaceList.get(i).getData("name").equals(place.getData("name")) &&
+                                    TPlaceList.get(i).getData("location").equals(place.getData("location")) &&
+                                    TPlaceList.get(i).getData("label").equals(place.getData("label"))) {
+                                TPlaceList.remove(i);
+                                System.out.println("asd");
+                            }
+                            else {
+                            }
+                        }
+
+                        compositeDisposable.add(iAppService.place_delete_one(email.replace("\"", ""), title,
+                                                                                place.getData("name").replace("\"", ""),
+                                                                      place.getData("location").split("\"")[1] + " " + place.getData("location").split("\"")[3],
+                                                                                place.getData("label").replace("\"", ""))
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .retry()
+                                .subscribe(new Consumer<String>() {
+                                    @Override
+                                    public void accept(String data) throws Exception {
+                                        Log.e("place_delete_one", data);
+
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }));
+                    }
+
+                }
+                break;
+        }
     }
 }

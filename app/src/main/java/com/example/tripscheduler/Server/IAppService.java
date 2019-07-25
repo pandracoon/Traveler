@@ -5,11 +5,14 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface IAppService {
     @POST("json_test")
@@ -160,4 +163,9 @@ public interface IAppService {
                                  @Part("upload") RequestBody name,
                                  @Part("owner_email") RequestBody owner_email);
 
+    @GET("maps/api/directions/json")
+    Call<Model.DirectionResults> getJson(@Query("origin") String origin,
+                                         @Query("destination") String destination,
+                                         @Query("key") String key,
+                                         @Query("mode") String mode);
 }

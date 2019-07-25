@@ -5,7 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -13,6 +16,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.tripscheduler.R;
 import com.example.tripscheduler.Server.IAppService;
+import com.example.tripscheduler.Server.Model;
 import com.example.tripscheduler.Server.RetrofitClient;
 import com.google.android.material.tabs.TabLayout;
 import com.google.gson.JsonArray;
@@ -23,7 +27,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ScheduleFragment extends Fragment {
 
@@ -124,6 +132,55 @@ public class ScheduleFragment extends Fragment {
 
       @Override
       public void onTabReselected(TabLayout.Tab tab) {
+
+      }
+    });
+
+    Button test = rootView.findViewById(R.id.test_button);
+
+    test.setOnClickListener(new View.OnClickListener(){
+      public void onClick(View v) {
+        Toast.makeText(getContext(), "You made a mess", Toast.LENGTH_LONG).show();
+
+        String base_url = "https://maps.googleapis.com/";
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(base_url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        IAppService reqinterface = retrofit.create(IAppService.class);
+
+        String origin = "41.2198254,16.3076254";
+        String dest = "41.2199,16.3062";
+        String key = "AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA";
+
+        Call<Model.DirectionResults> req = reqinterface.getJson(origin, dest, key, "transit");
+
+        req.enqueue(new Callback<Model.DirectionResults>() {
+
+          @Override
+          public void onResponse(Call<Model.DirectionResults> call, Response<Model.DirectionResults> response) {
+            Log.d("CallBack", " response is " + response);
+            Model.Route routeA = response.body().getRoutes().get(0);
+//            Model.Legs legs = routeA.getLegses().get(0);
+
+            for (int j = 0; j < response.body().getRoutes().size(); j ++) {
+                for (int i = 0; i < response.body().getRoutes().get(j).getLegses().size(); i++) {
+                    System.out.println(routeA.getLegses().get(i).getDistance().getText());
+                    System.out.println(routeA.getLegses().get(i).getDistance().getValue());
+                    System.out.println(routeA.getLegses().get(i).getDuration().getText());
+                    System.out.println(routeA.getLegses().get(i).getDuration().getValue());
+                }
+            }
+          }
+
+          @Override
+          public void onFailure(Call<Model.DirectionResults> call, Throwable t) {
+            Log.d("CallBack", " Throwable is " +t);
+          }
+        });
+
 
       }
     });

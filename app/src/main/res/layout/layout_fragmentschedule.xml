@@ -29,6 +29,12 @@
 
   </com.google.android.material.tabs.TabLayout>
 
+  <Button
+      android:id="@+id/test_button"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text="Button" />
+
   <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content">

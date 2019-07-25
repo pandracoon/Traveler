@@ -71,10 +71,10 @@ public class ScheduleViewPagerFragment extends Fragment {
         scheduleList = new ArrayList<>();
 
         // guess, should add Schedule items here <- currently it's just travel, but should manage later :P
-        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "6:00am", "30min"));
-        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "7:00am", "30min"));
-        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "8:00am", "30min"));
-        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "9:00am", "30min"));
+        scheduleList.add(new Schedule(email, title, "Place Name", "Location", "Label", "Short Memo", "6 00", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name2", "Location", "Label", "Short Memo", "7 00", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name3", "Location", "Label", "Short Memo", "8 00", "30"));
+        scheduleList.add(new Schedule(email, title, "Place Name4", "Location", "Label", "Short Memo", "15 00", "30"));
 
         compositeDisposable.add(iAppService.schedule_get_one(email.replace("\"", ""), title)
                 .subscribeOn(Schedulers.io())
@@ -113,11 +113,13 @@ public class ScheduleViewPagerFragment extends Fragment {
                                     System.out.println(location.get(0));
                                     System.out.println(location.get(1));
 
-                                    scheduleList.add(new Schedule(email, title, object2.get("name").toString(), object2.get("location").toString(),
-                                            object2.get("label").toString(), object2.get("memo").toString(), object2.get("start").toString(),
-                                            object2.get("duration").toString()));
+                                    if (sectionNumber == i) {
+                                        scheduleList.add(new Schedule(email, title, object2.get("name").toString(), object2.get("location").toString(),
+                                                object2.get("label").toString(), object2.get("memo").toString(), object2.get("start").toString(),
+                                                object2.get("duration").toString()));
 
-                                    adapter.notifyDataSetChanged();
+                                        adapter.notifyDataSetChanged();
+                                    }
 //                                    adapter = new ScheduleListViewAdapter(scheduleList);
                                 }
                             }
