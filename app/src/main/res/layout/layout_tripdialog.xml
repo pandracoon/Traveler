@@ -1,128 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/dialog1"
+<androidx.constraintlayout.widget.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/dialog1"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/textColor"
+  android:orientation="vertical">
+
+  <androidx.appcompat.widget.Toolbar
+    android:id="@+id/tripToolBar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="?attr/actionBarSize"
     android:background="@color/textColor"
-    android:orientation="vertical">
+    android:elevation="1dp"
+    app:titleTextColor="@color/textColorPrimary"
+    tools:ignore="MissingConstraints"/>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tripToolBar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/textColor"
-        android:elevation="1dp"
-        app:titleTextColor="@color/textColorPrimary"
-        tools:ignore="MissingConstraints" />
+  <TextView
+    android:id="@+id/tripTextView"
+    android:layout_width="match_parent"
+    android:layout_height="?attr/actionBarSize"
+    android:elevation="1dp"
+    android:fontFamily="@font/mainfont_medium"
+    android:gravity="center"
+    android:text="여정 변경"
+    android:textColor="@color/textColorPrimary"
+    android:textSize="25sp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
 
-    <TextView
-        android:id="@+id/tripTextView"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:elevation="1dp"
-        android:fontFamily="@font/mainfont_medium"
-        android:gravity="center"
-        android:text="여정 변경"
-        android:textColor="@color/textColorPrimary"
-        android:textSize="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+  <ImageView
+    android:id="@+id/closeDialogImg"
+    android:layout_width="41dp"
+    android:layout_height="0dp"
+    android:elevation="1dp"
+    android:src="@drawable/baseline_arrow_back_black_18"
+    android:tint="#373738"
+    app:layout_constraintBottom_toTopOf="@+id/guideline39"
+    app:layout_constraintEnd_toStartOf="@+id/guideline41"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="@+id/guideline33"
+    app:layout_constraintVertical_bias="0.0"/>
 
-    <ImageView
-        android:id="@+id/closeDialogImg"
-        android:layout_width="41dp"
-        android:layout_height="0dp"
-        android:elevation="1dp"
-        android:src="@drawable/baseline_arrow_back_black_18"
-        android:tint="#373738"
-        app:layout_constraintBottom_toTopOf="@+id/guideline39"
-        app:layout_constraintEnd_toStartOf="@+id/guideline41"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline33"
-        app:layout_constraintVertical_bias="0.0" />
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/fab2"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    app:fabCustomSize="64dp"
+    app:layout_constraintBottom_toTopOf="@+id/guideline35"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:srcCompat="@drawable/switchicon"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        app:fabCustomSize="64dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline35"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/switchicon" />
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline35"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_percent="0.983"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline35"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.983" />
+  <ListView
+    android:id="@+id/tripListView"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:listSelector="#E6E6E6"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="1.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tripTextView"
+    app:layout_constraintVertical_bias="1.0"/>
 
-    <ListView
-        android:id="@+id/tripListView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:listSelector="#E6E6E6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tripTextView"
-        app:layout_constraintVertical_bias="1.0" />
+  <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
+  <!--android:id="@+id/tripListView"-->
+  <!--android:layout_width="0dp"-->
+  <!--android:layout_height="0dp"-->
+  <!--android:listSelector="#E6E6E6"-->
+  <!--app:layout_constraintBottom_toBottomOf="parent"-->
+  <!--app:layout_constraintEnd_toEndOf="parent"-->
+  <!--app:layout_constraintStart_toStartOf="parent"-->
+  <!--app:layout_constraintTop_toBottomOf="@+id/tripTextView"/>-->
 
-    <!--<com.baoyz.swipemenulistview.SwipeMenuListView-->
-      <!--android:id="@+id/tripListView"-->
-      <!--android:layout_width="0dp"-->
-      <!--android:layout_height="0dp"-->
-      <!--android:listSelector="#E6E6E6"-->
-      <!--app:layout_constraintBottom_toBottomOf="parent"-->
-      <!--app:layout_constraintEnd_toEndOf="parent"-->
-      <!--app:layout_constraintStart_toStartOf="parent"-->
-      <!--app:layout_constraintTop_toBottomOf="@+id/tripTextView"/>-->
+  <ImageView
+    android:id="@+id/imageView3"
+    android:layout_width="41dp"
+    android:layout_height="0dp"
+    android:elevation="1dp"
+    android:tint="#373738"
+    app:layout_constraintBottom_toTopOf="@+id/guideline39"
+    app:layout_constraintEnd_toEndOf="@+id/tripTextView"
+    app:layout_constraintStart_toStartOf="@+id/guideline42"
+    app:layout_constraintTop_toTopOf="@+id/guideline33"
+    app:srcCompat="@drawable/baseline_add_black_18"/>
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="41dp"
-        android:layout_height="0dp"
-        android:elevation="1dp"
-        android:tint="#373738"
-        app:layout_constraintBottom_toTopOf="@+id/guideline39"
-        app:layout_constraintEnd_toEndOf="@+id/tripTextView"
-        app:layout_constraintStart_toStartOf="@+id/guideline42"
-        app:layout_constraintTop_toTopOf="@+id/guideline33"
-        app:srcCompat="@drawable/baseline_add_black_18" />
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline33"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_begin="9dp"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline33"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="9dp" />
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline39"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:layout_constraintGuide_begin="48dp"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline39"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="48dp" />
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline41"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintGuide_begin="51dp"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline41"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="51dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline42"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="51dp" />
+  <androidx.constraintlayout.widget.Guideline
+    android:id="@+id/guideline42"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:layout_constraintGuide_end="51dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

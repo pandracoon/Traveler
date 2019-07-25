@@ -38,6 +38,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.tripscheduler.Place.PlaceAddMenuActivity;
 import com.example.tripscheduler.Place.PlaceFragment;
+import com.example.tripscheduler.Schedule.Schedule;
+import com.example.tripscheduler.Schedule.ScheduleAddActivity;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
@@ -66,10 +68,14 @@ public class MainActivity extends AppCompatActivity {
   public static final int ADD_TRAVEL_REQUEST = 1;
   public static final int EDIT_TRAVEL_REQUEST = 2;
   public static final int ADD_PLACE_REQUEST = 3;
+  public static final int ADD_SCHEDULE_REQUEST = 4;
 
   private final String SERVER = "http://143.248.36.205:3000";
   private CompositeDisposable compositeDisposable = new CompositeDisposable();
   private IAppService iAppService;
+
+  Menu outMenu;
+  Toolbar mainToolBar;
 
   TextView titleText;
   private FragmentManager fragmentManager;
@@ -96,30 +102,30 @@ public class MainActivity extends AppCompatActivity {
     email = getIntent().getStringExtra("email");
     travelList = new ArrayList<>();
 
-    Toolbar toolbar = findViewById(R.id.mainToolBar);
-    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
-    setSupportActionBar(toolbar);
+    mainToolBar = findViewById(R.id.mainToolBar);
+    mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+    setSupportActionBar(mainToolBar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     getSupportActionBar().setDisplayShowTitleEnabled(false);
 
     titleText = findViewById(R.id.titleTextView);
 
     compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .retry()
-            .subscribe(new Consumer<String>() {
-              @Override
-              public void accept(String data) throws Exception {
-                Log.e("user_get_recent_one", data);
-                currentTravel = data.replace("\"", "");
-                titleText.setText(currentTravel);
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .retry()
+        .subscribe(new Consumer<String>() {
+          @Override
+          public void accept(String data) throws Exception {
+            Log.e("user_get_recent_one", data);
+            currentTravel = data.replace("\"", "");
+            titleText.setText(currentTravel);
 
-                fragmentManager = getSupportFragmentManager();
-                FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
-              }
-            }));
+            fragmentManager = getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.add(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
+          }
+        }));
 
 //    titleText.setText(currentTravel);
 
@@ -151,46 +157,52 @@ public class MainActivity extends AppCompatActivity {
               case R.id.place:
 
                 compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .retry()
-                        .subscribe(new Consumer<String>() {
-                          @Override
-                          public void accept(String data) throws Exception {
-                            Log.e("user_get_recent_one", data);
-                            currentTravel = data.replace("\"", "");
-                            titleText.setText(currentTravel);
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .retry()
+                    .subscribe(new Consumer<String>() {
+                      @Override
+                      public void accept(String data) throws Exception {
+                        Log.e("user_get_recent_one", data);
+                        currentTravel = data.replace("\"", "");
+                        titleText.setText(currentTravel);
 
-                            fragmentState = 1;
+                        fragmentState = 1;
 
-                            fragmentManager = getSupportFragmentManager();
-                            FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
-                            transaction.replace(R.id.frameLayout, fragmentPlace).commit();
-                          }
-                        }));
+                        fragmentManager = getSupportFragmentManager();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""));
+                        transaction.replace(R.id.frameLayout, fragmentPlace).commit();
+                        MenuItem item = outMenu.findItem(R.id.optimize);
+                        item.setVisible(false);
+                      }
+                    }));
 
 //                fragmentState = 1;
 //                transaction.replace(R.id.frameLayout, new PlaceFragment(currentTravel, email.replace("\"", ""))).commit();
                 break;
               case R.id.schedule:
                 compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .retry()
-                        .subscribe(new Consumer<String>() {
-                          @Override
-                          public void accept(String data) throws Exception {
-                            Log.e("user_get_recent_one", data);
-                            currentTravel = data.replace("\"", "");
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .retry()
+                    .subscribe(new Consumer<String>() {
+                      @Override
+                      public void accept(String data) throws Exception {
+                        Log.e("user_get_recent_one", data);
+                        currentTravel = data.replace("\"", "");
 
-                            fragmentState = 2;
+                        fragmentState = 2;
 
-                            fragmentManager = getSupportFragmentManager();
-                            FragmentTransaction transaction = fragmentManager.beginTransaction();
-                            transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
-                          }
-                        }));
+                        fragmentManager = getSupportFragmentManager();
+                        FragmentTransaction transaction = fragmentManager.beginTransaction();
+                        transaction
+                            .replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email))
+                            .commit();
+                        MenuItem item = outMenu.findItem(R.id.optimize);
+                        item.setVisible(true);
+                      }
+                    }));
                 break;
               case R.id.trip:
                 break;
@@ -200,16 +212,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
     compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .retry()
-            .subscribe(new Consumer<String>() {
-              @Override
-              public void accept(String data) throws Exception {
-                Log.e("user_get_recent_one", data);
-                currentTravel = data.replace("\"", "");
-              }
-            }));
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .retry()
+        .subscribe(new Consumer<String>() {
+          @Override
+          public void accept(String data) throws Exception {
+            Log.e("user_get_recent_one", data);
+            currentTravel = data.replace("\"", "");
+          }
+        }));
 
   }
 
@@ -221,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
     dialog.setContentView(dialogView);
 
+    mainToolBar.setVisibility(View.INVISIBLE);
     Toolbar tripToolbar = dialog.findViewById(R.id.tripToolBar);
     tripToolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(tripToolbar);
@@ -296,7 +309,8 @@ public class MainActivity extends AppCompatActivity {
         currentTravel = selectedTravel;
         selectedTravel = null;
 
-        compositeDisposable.add(iAppService.user_set_recent_one(email.replace("\"", ""), currentTravel)
+        compositeDisposable
+            .add(iAppService.user_set_recent_one(email.replace("\"", ""), currentTravel)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .retry()
@@ -310,16 +324,16 @@ public class MainActivity extends AppCompatActivity {
         revealShow(dialogView, false, dialog);
         if (fragmentState == 1) {
           compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .retry()
-                  .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String data) throws Exception {
-                      Log.e("user_get_recent_one", data);
-                      currentTravel = data.replace("\"", "");
-                    }
-                  }));
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .retry()
+              .subscribe(new Consumer<String>() {
+                @Override
+                public void accept(String data) throws Exception {
+                  Log.e("user_get_recent_one", data);
+                  currentTravel = data.replace("\"", "");
+                }
+              }));
 
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
@@ -328,62 +342,62 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
           compositeDisposable.add(iAppService.user_get_recent_one(email.replace("\"", ""))
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .retry()
-                  .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String data) throws Exception {
-                      Log.e("user_get_recent_one", data);
-                      currentTravel = data.replace("\"", "");
-                    }
-                  }));
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .retry()
+              .subscribe(new Consumer<String>() {
+                @Override
+                public void accept(String data) throws Exception {
+                  Log.e("user_get_recent_one", data);
+                  currentTravel = data.replace("\"", "");
+                }
+              }));
 
           FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email)).commit();
+          transaction.replace(R.id.frameLayout, new ScheduleFragment(currentTravel, email))
+              .commit();
         }
       }
     });
 
     compositeDisposable.add(iAppService.travel_get_all(email.replace("\"", ""))
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .retry()
-            .subscribe(new Consumer<String>() {
-              @Override
-              public void accept(String data) throws Exception {
-                Log.e("travel_get_all", data);
+        .subscribeOn(Schedulers.io())
+        .observeOn(AndroidSchedulers.mainThread())
+        .retry()
+        .subscribe(new Consumer<String>() {
+          @Override
+          public void accept(String data) throws Exception {
+            Log.e("travel_get_all", data);
 
-                if (data.equals("0")) {
-                  System.out.println("No data existed");
-                }
+            if (data.equals("0")) {
+              System.out.println("No data existed");
+            } else {
+              JsonParser jsonParser = new JsonParser();
+              JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
 
-                else {
-                  JsonParser jsonParser = new JsonParser();
-                  JsonArray jsonArray = (JsonArray) jsonParser.parse(data);
+              for (int i = 0; i < jsonArray.size(); i++) {
+                JsonObject object = (JsonObject) jsonArray.get(i);
 
-                  for (int i = 0; i < jsonArray.size(); i++) {
-                    JsonObject object = (JsonObject) jsonArray.get(i);
-
-                    System.out.println(object.get("title"));
-                    System.out.println(object.get("area"));
-                    System.out.println(object.get("start_date"));
-                    System.out.println(object.get("end_date"));
+                System.out.println(object.get("title"));
+                System.out.println(object.get("area"));
+                System.out.println(object.get("start_date"));
+                System.out.println(object.get("end_date"));
 
 //                    adapter.addItem(new Travel(email, object.get("title").toString().replace("\"", ""), object.get("area").toString().replace("\"", ""),
 //                            object.get("start_date").toString().replace("\"", "").replace("-", "."),
 //                            object.get("end_date").toString().replace("\"", "").replace("-", ".")));
 
-                    travelList.add(new Travel(email, object.get("title").toString().replace("\"", ""), object.get("area").toString().replace("\"", ""),
-                            object.get("start_date").toString().replace("\"", "").replace("-", "."),
-                            object.get("end_date").toString().replace("\"", "").replace("-", ".")));
+                travelList.add(new Travel(email, object.get("title").toString().replace("\"", ""),
+                    object.get("area").toString().replace("\"", ""),
+                    object.get("start_date").toString().replace("\"", "").replace("-", "."),
+                    object.get("end_date").toString().replace("\"", "").replace("-", ".")));
 
-                    adapter.addItem(travelList.get(travelList.size() - 1));
-                    adapter.notifyDataSetChanged();
-                  }
-                }
+                adapter.addItem(travelList.get(travelList.size() - 1));
+                adapter.notifyDataSetChanged();
               }
-            }));
+            }
+          }
+        }));
 
     ImageView addButton = dialog.findViewById(R.id.imageView3);
     addButton.setOnClickListener(new OnClickListener() {
@@ -399,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
     imageView.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-
+        mainToolBar.setVisibility(View.VISIBLE);
         revealShow(dialogView, false, dialog);
       }
     });
@@ -417,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
       @Override
       public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
         if (i == KeyEvent.KEYCODE_BACK) {
-
+          mainToolBar.setVisibility(View.VISIBLE);
           revealShow(dialogView, false, dialog);
           return true;
         }
@@ -497,17 +511,19 @@ public class MainActivity extends AppCompatActivity {
           adapter.notifyDataSetChanged();
 
           // Insert Travel to the server
-          compositeDisposable.add(iAppService.travel_insert_one(email.replace("\"", ""), travelData[0], travelData[1], travelData[2], travelData[3])
-                  .subscribeOn(Schedulers.io())
-                  .observeOn(AndroidSchedulers.mainThread())
-                  .retry()
-                  .subscribe(new Consumer<String>() {
-                    @Override
-                    public void accept(String data) throws Exception {
-                      Log.e("travel_insert_one", data);
+          compositeDisposable.add(iAppService
+              .travel_insert_one(email.replace("\"", ""), travelData[0], travelData[1],
+                  travelData[2], travelData[3])
+              .subscribeOn(Schedulers.io())
+              .observeOn(AndroidSchedulers.mainThread())
+              .retry()
+              .subscribe(new Consumer<String>() {
+                @Override
+                public void accept(String data) throws Exception {
+                  Log.e("travel_insert_one", data);
 
-                    }
-                  }));
+                }
+              }));
         }
         break;
       case EDIT_TRAVEL_REQUEST:
@@ -534,7 +550,8 @@ public class MainActivity extends AppCompatActivity {
                 travelList.remove(i);
               }
 
-              compositeDisposable.add(iAppService.travel_delete_one(email.replace("\"", ""), travel.getTitle())
+              compositeDisposable
+                  .add(iAppService.travel_delete_one(email.replace("\"", ""), travel.getTitle())
                       .subscribeOn(Schedulers.io())
                       .observeOn(AndroidSchedulers.mainThread())
                       .retry()
@@ -561,9 +578,11 @@ public class MainActivity extends AppCompatActivity {
           byte[] bytes = intent.getByteArrayExtra("image");
           Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
-          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();//Todo 없애보고 해보고 그냥 해보고
-          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""),intent.getStringExtra("name"), intent.getStringExtra("latLng"),
-                  intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
+          FragmentTransaction transaction = getSupportFragmentManager()
+              .beginTransaction();//Todo 없애보고 해보고 그냥 해보고
+          fragmentPlace = new PlaceFragment(currentTravel, email.replace("\"", ""),
+              intent.getStringExtra("name"), intent.getStringExtra("latLng"),
+              intent.getStringExtra("label"), BitmapArithmetic.resizeBitmap(image));
           transaction.replace(R.id.frameLayout, fragmentPlace).commit();
 
         } else {
@@ -571,17 +590,30 @@ public class MainActivity extends AppCompatActivity {
         }
 
         break;
+
+      case ADD_SCHEDULE_REQUEST:
+
+        if(resultCode == RESULT_OK){
+          Schedule schedule = (Schedule)intent.getSerializableExtra("schedule");
+
+        }
+        break;
     }
   }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-    MenuInflater menuInflater = getMenuInflater();
-    menuInflater.inflate(R.menu.travel_menu, menu);
 
-    MenuItem addMenu = menu.findItem(R.id.add);
+    outMenu = menu;
+
+    MenuInflater menuInflater = getMenuInflater();
+    menuInflater.inflate(R.menu.schedule_menu, outMenu);
+
+    MenuItem addMenu = outMenu.findItem(R.id.addSchedule);
     tintMenuIcon(getApplicationContext(), addMenu, R.color.textColorPrimary);
 
+    MenuItem optimizeMenu = outMenu.findItem(R.id.optimize);
+    tintMenuIcon(getApplicationContext(), optimizeMenu, R.color.yellow);
     return true;
   }
 
@@ -596,14 +628,20 @@ public class MainActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
     switch (item.getItemId()) {
-      case R.id.add:
+      case R.id.addSchedule:
         if (fragmentState == 1) {
           Intent placeAddIntent = new Intent(this, PlaceAddMenuActivity.class);
           startActivityForResult(placeAddIntent, ADD_PLACE_REQUEST);
 
+        } else if (fragmentState == 2) {
+          Intent scheduleAddIntent = new Intent(this, ScheduleAddActivity.class);
+          scheduleAddIntent.putExtra("email",email);
+          scheduleAddIntent.putExtra("title",currentTravel);
+          startActivityForResult(scheduleAddIntent, ADD_SCHEDULE_REQUEST);
         }
         break;
-
+      case R.id.optimize:
+        break;
     }
     return true;
   }

@@ -29,6 +29,7 @@
       android:layout_height="?attr/actionBarSize"
       android:background="@color/textColor"
       android:elevation="1dp"
+      app:contentInsetLeft="50dp"
       app:titleTextColor="@color/textColorPrimary"
       tools:ignore="MissingConstraints"/>
 
@@ -80,7 +81,7 @@
       app:layout_constraintBottom_toTopOf="@+id/guideline30"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:srcCompat="@drawable/switchicon"/>
+      app:srcCompat="@drawable/baseline_menu_black_18"/>
     <androidx.constraintlayout.widget.Guideline
       android:id="@+id/guideline30"
       android:layout_width="wrap_content"

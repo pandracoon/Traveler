@@ -1,6 +1,8 @@
 package com.example.tripscheduler.Schedule;
 
-public class Schedule {
+import java.io.Serializable;
+
+public class Schedule implements Serializable {
 
     private String email, title, name, location, label, memo, start, duration;
 
