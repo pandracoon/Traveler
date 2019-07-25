@@ -3,7 +3,7 @@ package com.example.tripscheduler.Server;
 import android.graphics.Bitmap;
 
 public class BitmapArithmetic {
-    private static final int PIXEL_THRESHOLD = 100;
+    private static final int PIXEL_THRESHOLD = 200;
 
     public static Bitmap resizeBitmap(Bitmap img) {
             int dstWidth = img.getWidth();

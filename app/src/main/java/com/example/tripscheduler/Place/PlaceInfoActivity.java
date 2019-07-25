@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+import com.bumptech.glide.Glide;
 import com.example.tripscheduler.R;
 import com.example.tripscheduler.Travel.Travel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +57,8 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
     Bitmap resizedImage, scaledBitmap;
     ArrayList<String> arrayList = new ArrayList<String>();
 
+    String image;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +68,7 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
 
         name = place.getData("name");
         label = place.getData("label");
+        image = place.getImage();
 
         Toolbar toolbar = findViewById(R.id.placeAddToolBar);
         setSupportActionBar(toolbar);
@@ -81,6 +85,11 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
 
 
         imageView = findViewById(R.id.imageView8);
+        Glide.with(context)
+                .load(image)
+                .fitCenter()
+                .into(imageView);
+
         titleEditText = findViewById(R.id.editText8);
         titleEditText.setText(name);
         spinner = findViewById(R.id.spinner2);
@@ -108,8 +117,6 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     public void onMapReady(GoogleMap googleMap) {
-
-
         TPlace place = (TPlace) getIntent().getSerializableExtra("place");
         String strLatLng = place.getData("location");
         System.out.println(strLatLng);
@@ -120,8 +127,6 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
         googleMap.addMarker(new MarkerOptions().position(latLng).title(name));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.setMinZoomPreference(15.0f);
-
-
     }
 
     @Override

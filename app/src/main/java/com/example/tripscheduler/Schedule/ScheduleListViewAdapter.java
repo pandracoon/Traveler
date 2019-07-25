@@ -48,10 +48,26 @@ public class ScheduleListViewAdapter extends BaseAdapter {
 
         Schedule schedule = scheduleItemList.get(position);
 
-        //  Add Dummy
-        startTimeTextView.setText(schedule.getData("start"));
-        memoTextView.setText(schedule.getData("memo"));
-        durationTextView.setText(schedule.getData("duration"));
+        String startTime;
+
+        System.out.println("asddsa");
+        System.out.println(Integer.parseInt(schedule.getData("start").replace("\"", "").split(" ")[0]));
+        System.out.println("asd");
+
+        if (Integer.parseInt(schedule.getData("start").replace("\"", "").split(" ")[0]) <= 12)
+        {
+            startTime = schedule.getData("start").replace("\"", "").split(" ")[0] + ":"
+                    + schedule.getData("start").replace("\"", "").split(" ")[1] + "am";
+        }
+        else
+        {
+            startTime = (Integer.parseInt(schedule.getData("start").replace("\"", "").split(" ")[0]) - 12)
+                    + ":" + schedule.getData("start").replace("\"", "").split(" ")[1] + "pm";
+        }
+
+        startTimeTextView.setText(startTime);
+        memoTextView.setText(schedule.getData("memo").replace("\"", ""));
+        durationTextView.setText(schedule.getData("duration").replace("\"", "") + "min");
 
 
 

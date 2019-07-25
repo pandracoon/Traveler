@@ -56,9 +56,9 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.baseline_hotel_black_18dp));
         }
 
-        holder.nameView.setText(mList.get(position).getData("name"));
-        holder.locationView.setText(mList.get(position).getData("location"));
-        holder.labelView.setText(mList.get(position).getData("label"));
+        holder.nameView.setText(mList.get(position).getData("name").replace("\"", ""));
+//        holder.locationView.setText(mList.get(position).getData("location"));
+//        holder.labelView.setText(mList.get(position).getData("label"));
 
         Glide.with(context)
                 .load(mList.get(position).getImage())
@@ -88,8 +88,8 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
             imageView = (ImageView) itemView.findViewById(R.id.img);
             nameView = (TextView) itemView.findViewById(R.id.img_name);
-            locationView = (TextView) itemView.findViewById(R.id.location);
-            labelView = (TextView) itemView.findViewById(R.id.label);
+//            locationView = (TextView) itemView.findViewById(R.id.location);
+//            labelView = (TextView) itemView.findViewById(R.id.label);
             imageBadgeView = (ImageBadgeView) itemView.findViewById(R.id.badge);
             imageBadgeView2 = (ImageBadgeView) itemView.findViewById(R.id.badge2);
 
