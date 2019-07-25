@@ -113,8 +113,8 @@ public class ScheduleViewPagerFragment extends Fragment {
                                     System.out.println(object2.get("duration"));
 
                                     JsonArray location = (JsonArray) object2.get("location");
-                                    System.out.println(location.get(0));
-                                    System.out.println(location.get(1));
+//                                    System.out.println(location.get(0));
+//                                    System.out.println(location.get(1));
 
                                     if (sectionNumber == i) {
                                         scheduleList.add(new Schedule(email, title, object2.get("name").toString(), object2.get("location").toString(),
