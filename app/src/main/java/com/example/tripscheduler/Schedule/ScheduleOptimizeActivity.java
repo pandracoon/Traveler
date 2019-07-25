@@ -1,6 +1,7 @@
 package com.example.tripscheduler.Schedule;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -123,13 +124,19 @@ public class ScheduleOptimizeActivity extends AppCompatActivity {
       public void onClick(
           View view) { //Todo 누르면 입력받은 장소들(selectedPlaceList), 소요시간들(time)전부 모아짐. ArrayList꼴로 방았음
         for (int i = 0; i < timeEditText.length; i++) {
-          if (timeEditText[i].getText().toString() != null) {
+          if (!timeEditText[i].getText().toString().equals("")) {
             time.add(Integer.parseInt(timeEditText[i].getText().toString()));
           }
-
-          //selectedPlaceList
-
         }
+
+        //selectedPlaceList
+        Intent intent = new Intent();
+        intent.putExtra("placeList", selectedPlaceList);
+        intent.putExtra("timeList", time);
+        setResult(RESULT_OK, intent);
+        finish();
+
+
       }
     });
 

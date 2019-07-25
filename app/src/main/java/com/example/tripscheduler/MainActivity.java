@@ -38,6 +38,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import com.example.tripscheduler.Place.PlaceAddMenuActivity;
 import com.example.tripscheduler.Place.PlaceFragment;
+import com.example.tripscheduler.Place.TPlace;
 import com.example.tripscheduler.Schedule.Schedule;
 import com.example.tripscheduler.Schedule.ScheduleAddActivity;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
@@ -664,6 +665,14 @@ public class MainActivity extends AppCompatActivity {
         break;
 
       case OPTIMIZE_SCHEDULE_REQUEST:
+        if(resultCode == RESULT_OK){
+          ArrayList<TPlace> placeList = (ArrayList<TPlace>)intent.getSerializableExtra("placeList");
+          ArrayList<Integer> timeList = intent.getIntegerArrayListExtra("timeList");
+          System.out.println(placeList);
+          System.out.println(timeList);
+
+        }
+
         break;
     }
   }
