@@ -111,8 +111,6 @@ public class PlaceFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_fragmentplace, container, false);
 
-        uploadButton = (Button) rootView.findViewById(R.id.upload_image);
-
         Retrofit retrofitClient = RetrofitClient.getInstance();
         iAppService = retrofitClient.create(IAppService.class);
 

@@ -46,10 +46,10 @@ public class PlaceListViewAdapter extends BaseAdapter {
     titleTextView.setText(place.getData("name"));
     String label = place.getData("label");
     if (label.equals("\"볼거리\"")) {
-      view.setBackgroundResource(R.drawable.baseline_directions_run_black_18dp);
+      view.setBackgroundResource(R.drawable.attraction);
     }
     if (label.equals("\"식당\"")) {
-      view.setBackgroundColor(Color.YELLOW);
+      view.setBackgroundColor(R.drawable.restaurant);
     }
     if (label.equals("\"숙박\"")) {
       view.setBackgroundResource(R.drawable.baseline_hotel_black_18dp);

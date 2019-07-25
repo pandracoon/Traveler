@@ -38,19 +38,19 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
     @Override
     public synchronized void onBindViewHolder(PlaceViewHolder holder, int position) {
 
-        if (mList.get(position).getData("label").replace("\"", "").equals("restaurant")) {
+        if (mList.get(position).getData("label").replace("\"", "").equals("볼거리")) {
             holder.imageBadgeView.setBadgeColor(Color.WHITE);
             holder.imageBadgeView.setBadgeTextColor(Color.WHITE);
-            holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.baseline_directions_run_black_18dp));
+            holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.attraction));
         }
 
-        else if (mList.get(position).getData("label").replace("\"", "").equals("attraction")) {
+        else if (mList.get(position).getData("label").replace("\"", "").equals("식당")) {
             holder.imageBadgeView.setBadgeColor(Color.WHITE);
             holder.imageBadgeView.setBadgeTextColor(Color.WHITE);
-            holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.baseline_place_black_18dp));
+            holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.restaurant));
         }
 
-        else if (mList.get(position).getData("label").replace("\"", "").equals("accommodation")) {
+        else if (mList.get(position).getData("label").replace("\"", "").equals("숙박")) {
             holder.imageBadgeView.setBadgeColor(Color.WHITE);
             holder.imageBadgeView.setBadgeTextColor(Color.WHITE);
             holder.imageBadgeView2.setBadgeBackground(context.getDrawable(R.drawable.baseline_hotel_black_18dp));

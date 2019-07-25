@@ -139,54 +139,6 @@ public class ScheduleFragment extends Fragment {
       }
     });
 
-    Button test = rootView.findViewById(R.id.test_button);
-
-    test.setOnClickListener(new View.OnClickListener(){
-      public void onClick(View v) {
-        Toast.makeText(getContext(), "You made a mess", Toast.LENGTH_LONG).show();
-
-        String base_url = "https://maps.googleapis.com/";
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(base_url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        IAppService reqinterface = retrofit.create(IAppService.class);
-
-        String origin = "41.2198254,16.3076254";
-        String dest = "41.2199,16.3062";
-        String key = "AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA";
-
-        Call<Model.DirectionResults> req = reqinterface.getJson(origin, dest, key, "transit");
-
-        req.enqueue(new Callback<Model.DirectionResults>() {
-          @Override
-          public void onResponse(Call<Model.DirectionResults> call, Response<Model.DirectionResults> response) {
-            Log.d("CallBack", " response is " + response);
-            Model.Route routeA = response.body().getRoutes().get(0);
-//            Model.Legs legs = routeA.getLegses().get(0);
-
-            for (int j = 0; j < response.body().getRoutes().size(); j ++) {
-                for (int i = 0; i < response.body().getRoutes().get(j).getLegses().size(); i++) {
-                    System.out.println(routeA.getLegses().get(i).getDistance().getText());
-                    System.out.println(routeA.getLegses().get(i).getDistance().getValue());
-                    System.out.println(routeA.getLegses().get(i).getDuration().getText());
-                    System.out.println(routeA.getLegses().get(i).getDuration().getValue());
-                }
-            }
-          }
-
-          @Override
-          public void onFailure(Call<Model.DirectionResults> call, Throwable t) {
-            Log.d("CallBack", " Throwable is " +t);
-          }
-        });
-
-
-      }
-    });
-
     return rootView;
   }
 
