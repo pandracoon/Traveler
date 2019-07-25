@@ -116,7 +116,6 @@ public class PlaceAddActivity extends AppCompatActivity implements OnMapReadyCal
         name = place.getName();
         address = place.getAddress();
         placeID = place.getId();
-        Log.e("dd", "dd");
         FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(placeID, fields);
         placeClient.fetchPlace(placeRequest).addOnSuccessListener(
             new OnSuccessListener<FetchPlaceResponse>() {
