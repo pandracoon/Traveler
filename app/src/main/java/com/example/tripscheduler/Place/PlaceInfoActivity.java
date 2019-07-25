@@ -114,6 +114,9 @@ public class PlaceInfoActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });
+
+        button = findViewById(R.id.button7);
+        button.setVisibility(View.INVISIBLE);
     }
 
     public void onMapReady(GoogleMap googleMap) {

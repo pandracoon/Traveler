@@ -2,6 +2,8 @@ package com.example.tripscheduler.Schedule;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -24,7 +26,7 @@ public class ScheduleVertexMapActivity extends AppCompatActivity implements OnMa
     setContentView(R.layout.layout_map);
 
     schedule = (Schedule) getIntent().getSerializableExtra("schedule");
-    String name = schedule.getData("name");
+    String name = schedule.getData("name").replace("\"","");
     Toolbar toolbar = findViewById(R.id.placeMapToolBar);
     toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(toolbar);
@@ -49,6 +51,18 @@ public class ScheduleVertexMapActivity extends AppCompatActivity implements OnMa
     googleMap.setMinZoomPreference(15.0f);
 
   }
+
+  @Override
+  public boolean onOptionsItemSelected(
+      @NonNull MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        finish();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 
   private LatLng convertLatLng(String strLatLng) {
     Double lat = Double.parseDouble(strLatLng.split("\"")[1]);
