@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:card_view="http://schemas.android.com/apk/res-auto"
   android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
+  android:layout_height="600dp"
   card_view:cardCornerRadius="20dp"
   card_view:cardUseCompatPadding="true">
 
@@ -26,10 +26,10 @@
     <ListView
       android:id="@+id/listview_alterdialog_list"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:listSelector="#E6E6E6"
+      android:layout_height="430dp"
       android:divider="@null"
-      android:dividerHeight="10dp">
+      android:dividerHeight="10dp"
+      android:listSelector="#E6E6E6">
     </ListView>
     <Button
       android:id="@+id/button8"

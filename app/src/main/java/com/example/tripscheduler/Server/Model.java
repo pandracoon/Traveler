@@ -25,6 +25,29 @@ public class Model {
         public void setLegses(List<Legs> legses) {
             this.legses = legses;
         }
+
+        @SerializedName("steps")
+        private List<Steps> steps;
+
+        public List<Steps> getSteps() {
+            return steps;
+        }
+
+        public void setSteps(List<Steps> steps) {
+            this.steps = steps;
+        }
+
+        @SerializedName("overview_polyline")
+        private OverviewPolyLine overviewPolyLine;
+
+        public OverviewPolyLine getOverviewPolyLine() {
+            return overviewPolyLine;
+        }
+
+        public void setOverviewPolyLine(OverviewPolyLine overviewPolyLine) {
+            this.overviewPolyLine = overviewPolyLine;
+        }
+
     }
 
     public class Distance{

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -57,7 +59,7 @@ public class PlaceMapActivity extends AppCompatActivity implements OnMapReadyCal
     toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(toolbar);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-    getSupportActionBar().setTitle("장소 리스트");
+    getSupportActionBar().setTitle(title.replace("\"",""));
 
     SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
         .findFragmentById(R.id.placeMap);
@@ -88,6 +90,18 @@ public class PlaceMapActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
   }
+
+  @Override
+  public boolean onOptionsItemSelected(
+      @NonNull MenuItem item) {
+    switch (item.getItemId()) {
+      case android.R.id.home:
+        finish();
+        return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 
   private LatLng convertLatLng(String strLatLng) {
     Double lat = Double.parseDouble(strLatLng.split("\"")[1]);

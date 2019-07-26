@@ -43,6 +43,7 @@ import com.example.tripscheduler.Place.TPlace;
 import com.example.tripscheduler.Schedule.Schedule;
 import com.example.tripscheduler.Schedule.ScheduleAddActivity;
 import com.example.tripscheduler.Schedule.ScheduleFragment;
+import com.example.tripscheduler.Schedule.ScheduleMapActivity;
 import com.example.tripscheduler.Schedule.ScheduleOptimizeActivity;
 import com.example.tripscheduler.Server.BitmapArithmetic;
 import com.example.tripscheduler.Server.IAppService;
@@ -126,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
     mainToolBar = findViewById(R.id.mainToolBar);
     mainToolBar.setBackgroundColor(Color.parseColor("#FFFFFF"));
     setSupportActionBar(mainToolBar);
-
 
     titleText = findViewById(R.id.titleTextView);
 
@@ -261,7 +261,6 @@ public class MainActivity extends AppCompatActivity {
 //    item2.setVisible(false);
 //    outMenu.close();
 //    outMenu.clear();
-
 
     ListView tripListView = dialog.findViewById(R.id.tripListView);
 
@@ -602,13 +601,15 @@ public class MainActivity extends AppCompatActivity {
         break;
 
       case OPTIMIZE_SCHEDULE_REQUEST:
-        if(resultCode == RESULT_OK){
-          final ArrayList<TPlace> placeList = (ArrayList<TPlace>)intent.getSerializableExtra("placeList");
+        if (resultCode == RESULT_OK) {
+          final ArrayList<TPlace> placeList = (ArrayList<TPlace>) intent
+              .getSerializableExtra("placeList");
           final ArrayList<Integer> timeList = intent.getIntegerArrayListExtra("timeList");
           System.out.println(placeList);
           System.out.println(timeList);
 
-          compositeDisposable.add(iAppService.schedule_get_one(email.replace("\"", ""), currentTravel)
+          compositeDisposable
+              .add(iAppService.schedule_get_one(email.replace("\"", ""), currentTravel)
                   .subscribeOn(Schedulers.io())
                   .observeOn(AndroidSchedulers.mainThread())
                   .retry()
@@ -619,9 +620,7 @@ public class MainActivity extends AppCompatActivity {
 
                       if (data.equals("0")) {
                         System.out.println("No data existed");
-                      }
-
-                      else {
+                      } else {
 
                         JsonParser jsonParser = new JsonParser();
                         JsonArray tempArray = (JsonArray) jsonParser.parse(data);
@@ -633,17 +632,20 @@ public class MainActivity extends AppCompatActivity {
 
                         final int size = jsonArray.size();
 
-                        final Integer[][] array = new Integer[size + timeList.size()][size + timeList.size()];
+                        final Integer[][] array = new Integer[size + timeList.size()][size
+                            + timeList.size()];
 
                         // Key Points Duration
-                        for (int i = 0; i < size; i ++) {
+                        for (int i = 0; i < size; i++) {
                           JsonObject object = (JsonObject) jsonArray.get(i);
-                          array[i][i] = Integer.parseInt(object.get("duration").toString().replace("\"", "")) * 60;
+                          array[i][i] =
+                              Integer.parseInt(object.get("duration").toString().replace("\"", ""))
+                                  * 60;
                           System.out.println(array[i][i]);
                         }
 
                         // Places Duration
-                        for (int i = size; i < size + timeList.size(); i ++) {
+                        for (int i = size; i < size + timeList.size(); i++) {
                           array[i][i] = timeList.get(i - size) * 60;
                           System.out.println(array[i][i]);
                         }
@@ -652,16 +654,18 @@ public class MainActivity extends AppCompatActivity {
                         String base_url = "https://maps.googleapis.com/";
 
                         Retrofit retrofit = new Retrofit.Builder()
-                                .baseUrl(base_url)
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
+                            .baseUrl(base_url)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
 
                         IAppService request = retrofit.create(IAppService.class);
 
-                        final int maxCount = (size + timeList.size()) * (size + timeList.size()) - (size + timeList.size());
+                        final int maxCount =
+                            (size + timeList.size()) * (size + timeList.size()) - (size + timeList
+                                .size());
 
-                        for (int i = 0; i < size + timeList.size(); i ++) {
-                          for (int j = 0; j < size + timeList.size(); j ++) {
+                        for (int i = 0; i < size + timeList.size(); i++) {
+                          for (int j = 0; j < size + timeList.size(); j++) {
                             if (i == j) {
                               continue;
                             }
@@ -674,34 +678,41 @@ public class MainActivity extends AppCompatActivity {
 
                             if (i < size) {
                               JsonObject temp = (JsonObject) jsonArray.get(i);
-                              origin = temp.get("location").toString().split("\"")[1] + "," + temp.get("location").toString().split("\"")[3];
+                              origin = temp.get("location").toString().split("\"")[1] + "," + temp
+                                  .get("location").toString().split("\"")[3];
                               System.out.println("schedule origin");
                               System.out.println(origin);
-                            }
-                            else {
-                              origin = placeList.get(i - size).getData("location").split("\"")[1] + "," + placeList.get(i - size).getData("location").split("\"")[3];
+                            } else {
+                              origin =
+                                  placeList.get(i - size).getData("location").split("\"")[1] + ","
+                                      + placeList.get(i - size).getData("location").split("\"")[3];
                               System.out.println("place origin");
                               System.out.println(origin);
                             }
 
                             if (j < size) {
                               JsonObject temp = (JsonObject) jsonArray.get(j);
-                              dest = temp.get("location").toString().split("\"")[1] + "," + temp.get("location").toString().split("\"")[3];;
+                              dest = temp.get("location").toString().split("\"")[1] + "," + temp
+                                  .get("location").toString().split("\"")[3];
+                              ;
                               System.out.println("schedule dest");
                               System.out.println(dest);
-                            }
-                            else {
-                              dest = placeList.get(j - size).getData("location").split("\"")[1] + "," + placeList.get(j - size).getData("location").split("\"")[3];
+                            } else {
+                              dest =
+                                  placeList.get(j - size).getData("location").split("\"")[1] + ","
+                                      + placeList.get(j - size).getData("location").split("\"")[3];
                               System.out.println("place dest");
                               System.out.println(dest);
                             }
 
                             String key = "AIzaSyAp5fwKE7aSSRG-Yclw9aNXI0quf8Hj7qA";
 
-                            Call<Model.DirectionResults> req = request.getJson(origin, dest, key, "transit");
+                            Call<Model.DirectionResults> req = request
+                                .getJson(origin, dest, key, "transit");
                             req.enqueue(new Callback<Model.DirectionResults>() {
                               @Override
-                              public void onResponse(Call<Model.DirectionResults> call, Response<Model.DirectionResults> response) {
+                              public void onResponse(Call<Model.DirectionResults> call,
+                                  Response<Model.DirectionResults> response) {
                                 Log.d("CallBack", " response is " + response);
                                 Model.Route route = response.body().getRoutes().get(0);
                                 Model.Legs leg = route.getLegses().get(0);
@@ -710,12 +721,18 @@ public class MainActivity extends AppCompatActivity {
 
                                 array[temp_i][temp_j] = weight;
 
-                                for (int j = 0; j < response.body().getRoutes().size(); j ++) {
-                                  for (int i = 0; i < response.body().getRoutes().get(j).getLegses().size(); i++) {
-                                    System.out.println(route.getLegses().get(i).getDistance().getText());
-                                    System.out.println(route.getLegses().get(i).getDistance().getValue());
-                                    System.out.println(route.getLegses().get(i).getDuration().getText());
-                                    System.out.println(route.getLegses().get(i).getDuration().getValue());
+                                for (int j = 0; j < response.body().getRoutes().size(); j++) {
+                                  for (int i = 0;
+                                      i < response.body().getRoutes().get(j).getLegses().size();
+                                      i++) {
+                                    System.out
+                                        .println(route.getLegses().get(i).getDistance().getText());
+                                    System.out
+                                        .println(route.getLegses().get(i).getDistance().getValue());
+                                    System.out
+                                        .println(route.getLegses().get(i).getDuration().getText());
+                                    System.out
+                                        .println(route.getLegses().get(i).getDuration().getValue());
                                   }
                                 }
 
@@ -726,171 +743,211 @@ public class MainActivity extends AppCompatActivity {
                                 currentCount = currentCount + 1;
 
                                 if (currentCount == maxCount) {
-                                    System.out.println("It's almost an end game");
+                                  System.out.println("It's almost an end game");
 
-                                    currentCount = 0;
+                                  currentCount = 0;
 
-                                    // Convert Array to ArrayList
-                                    ArrayList<ArrayList<Integer>> arrayList = new ArrayList<>();
-                                    for (Integer[] ints : array) {
-                                      ArrayList<Integer> list = new ArrayList<>();
-                                      for (int i : ints) {
-                                        list.add(i);
-                                      }
-                                      arrayList.add(list);
+                                  // Convert Array to ArrayList
+                                  ArrayList<ArrayList<Integer>> arrayList = new ArrayList<>();
+                                  for (Integer[] ints : array) {
+                                    ArrayList<Integer> list = new ArrayList<>();
+                                    for (int i : ints) {
+                                      list.add(i);
                                     }
-
-                                    System.out.println(arrayList);
-
-                                    // Request Optimization
-                                    Integer totalLength = size + timeList.size();
-                                    final ArrayList<ArrayList<Integer>> graphArray = arrayList;
-                                    final String graph = arrayListToString_2(arrayList);
-
-                                    ArrayList<Integer> limitsList = new ArrayList<>();
-
-                                    for (int i = 0; i < size - 1; i ++) {
-                                      JsonObject object = (JsonObject) jsonArray.get(i);
-                                      JsonObject object2 = (JsonObject) jsonArray.get(i + 1);
-
-                                      String tempTime1 = object.get("start").toString().split(" ")[0].split("\"")[1];
-                                      String tempMinute1 = object.get("start").toString().split(" ")[1].split("\"")[0];
-                                      Integer startTime1 = (Integer.parseInt(tempTime1) * 60 + Integer.parseInt(tempMinute1)) * 60;
-
-                                      String tempTime2 = object2.get("start").toString().split(" ")[0].split("\"")[1];
-                                      String tempMinute2 = object2.get("start").toString().split(" ")[1].split("\"")[0];
-                                      Integer startTime2 = (Integer.parseInt(tempTime2) * 60 + Integer.parseInt(tempMinute2)) * 60;
-
-                                      limitsList.add(startTime2 - startTime1);
-
-                                      System.out.println(startTime2 - startTime1);
-                                    }
-
-                                    String limits = arrayListToString_1(limitsList);
-
-                                    String keyPoints = Integer.toString(size);
-
-                                    System.out.println(totalLength.toString());
-                                    System.out.println(graph);
-                                    System.out.println(limits);
-                                    System.out.println(keyPoints);
-
-                                    compositeDisposable.add(iAppService.schedule_optimize(totalLength.toString(), graph, limits, keyPoints)
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .retry()
-                                            .subscribe(new Consumer<String>() {
-                                              @Override
-                                              public void accept(String data) throws Exception {
-                                                Log.e("schedule_optimize", data);
-
-                                                JsonParser jsonParser = new JsonParser();
-                                                JsonArray jsonArrayPath = (JsonArray) jsonParser.parse(data);
-
-                                                for (int i = 0; i < jsonArrayPath.size(); i ++) {
-                                                  JsonArray array = (JsonArray) jsonArrayPath.get(i);
-                                                  System.out.println((i + 1)  + " th path");
-
-                                                  String tempTime1;
-                                                  String tempMinute1;
-                                                  Integer duration1;
-                                                  Integer startTimeMinute1 = 0;
-                                                  String startTime1 = "";
-
-                                                  for (int j = 0; j < array.size() - 1; j ++) {
-                                                    System.out.println(array.get(j));
-
-                                                    // Add Transportation
-                                                    Integer start = Integer.parseInt(array.get(j).toString());
-                                                    Integer end = Integer.parseInt(array.get(j + 1).toString());
-
-                                                    if (j == 0) {
-                                                        JsonObject object = (JsonObject) jsonArray.get(i);
-                                                        tempTime1 = object.get("start").toString().split(" ")[0].split("\"")[1];
-                                                        tempMinute1 = object.get("start").toString().split(" ")[1].split("\"")[0];
-                                                        duration1 = Integer.parseInt(object.get("duration").toString().replace("\"", ""));
-                                                        startTimeMinute1 = Integer.parseInt(tempTime1) * 60 + Integer.parseInt(tempMinute1) + duration1;
-                                                    }
-
-                                                    startTime1 = (startTimeMinute1 / 60) + " " + (startTimeMinute1 % 60);
-
-                                                    System.out.println("Transportation");
-                                                    System.out.println(email.replace("\"", ""));
-                                                    System.out.println(currentTravel);
-                                                    System.out.println(day);
-                                                    System.out.println(startTime1);
-                                                    System.out.println(graphArray.get(start).get(end) / 60);
-
-                                                    compositeDisposable.add(iAppService.schedule_insert_one(email.replace("\"", ""),
-                                                            currentTravel, day.toString(), "transportation", "0 0", "이동", "Transportation",
-                                                            startTime1,  Integer.toString(graphArray.get(start).get(end)/60))
-                                                            .subscribeOn(Schedulers.io())
-                                                            .observeOn(AndroidSchedulers.mainThread())
-                                                            .retry()
-                                                            .subscribe(new Consumer<String>() {
-                                                              @Override
-                                                              public void accept(String data) throws Exception {
-                                                                Log.e("schedule_insert_one", data);
-                                                              }
-                                                            }));
-
-                                                    // Add Place <-> Should consider exception case
-                                                    if (j == array.size() - 2) {
-                                                        // this is end condition so, one can do fragment replace to make it possible to refresh the schedule list.
-
-                                                      fragmentManager = getSupportFragmentManager();
-                                                      FragmentTransaction transaction = fragmentManager.beginTransaction();
-                                                      fragmentSchedule = new ScheduleFragment(currentTravel, email);
-                                                      transaction.add(R.id.frameLayout, fragmentSchedule).commit();
-
-                                                        continue;
-                                                    }
-
-                                                    TPlace place = placeList.get(end - size);
-
-                                                    Integer startTimeMinute2 = startTimeMinute1 + (graphArray.get(start).get(end) / 60);
-                                                    String startTime2 = (startTimeMinute2 / 60) + " " + (startTimeMinute2 % 60);
-
-                                                    System.out.println("Place");
-                                                    System.out.println(email.replace("\"", ""));
-                                                    System.out.println(currentTravel);
-                                                    System.out.println(day);
-                                                    System.out.println(place.getData("name"));
-                                                    System.out.println(place.getData("location"));
-                                                    System.out.println(place.getData("label"));
-                                                    System.out.println(startTime2);
-                                                    System.out.println(graphArray.get(end).get(end) / 60);
-
-                                                    compositeDisposable.add(iAppService.schedule_insert_one(email.replace("\"", ""),
-                                                              currentTravel, day.toString(), place.getData("name").replace("\"", ""),
-                                                              place.getData("location").replace("\"", "").replace("[", "")
-                                                                      .replace("]", "").replace(",", " "),
-                                                              place.getData("label").replace("\"", ""),
-                                                              place.getData("name").replace("\"", ""), startTime2.replace("\"", ""),
-                                                              Integer.toString(graphArray.get(end).get(end)/60))
-                                                              .subscribeOn(Schedulers.io())
-                                                              .observeOn(AndroidSchedulers.mainThread())
-                                                              .retry()
-                                                              .subscribe(new Consumer<String>() {
-                                                                  @Override
-                                                                  public void accept(String data) throws Exception {
-                                                                      Log.e("schedule_insert_one", data);
-                                                                  }
-                                                              }));
-
-                                                    startTimeMinute1 = startTimeMinute2 + graphArray.get(end).get(end) / 60;
-
-                                                  }
-                                                }
-                                              }
-                                            }));
+                                    arrayList.add(list);
                                   }
+
+                                  System.out.println(arrayList);
+
+                                  // Request Optimization
+                                  Integer totalLength = size + timeList.size();
+                                  final ArrayList<ArrayList<Integer>> graphArray = arrayList;
+                                  final String graph = arrayListToString_2(arrayList);
+
+                                  ArrayList<Integer> limitsList = new ArrayList<>();
+
+                                  for (int i = 0; i < size - 1; i++) {
+                                    JsonObject object = (JsonObject) jsonArray.get(i);
+                                    JsonObject object2 = (JsonObject) jsonArray.get(i + 1);
+
+                                    String tempTime1 = object.get("start").toString().split(" ")[0]
+                                        .split("\"")[1];
+                                    String tempMinute1 = object.get("start").toString()
+                                        .split(" ")[1].split("\"")[0];
+                                    Integer startTime1 = (Integer.parseInt(tempTime1) * 60 + Integer
+                                        .parseInt(tempMinute1)) * 60;
+
+                                    String tempTime2 = object2.get("start").toString().split(" ")[0]
+                                        .split("\"")[1];
+                                    String tempMinute2 = object2.get("start").toString()
+                                        .split(" ")[1].split("\"")[0];
+                                    Integer startTime2 = (Integer.parseInt(tempTime2) * 60 + Integer
+                                        .parseInt(tempMinute2)) * 60;
+
+                                    limitsList.add(startTime2 - startTime1);
+                                  }
+
+                                  String limits = arrayListToString_1(limitsList);
+
+                                  String keyPoints = Integer.toString(size);
+
+                                  System.out.println(totalLength.toString());
+                                  System.out.println(graph);
+                                  System.out.println(limits);
+                                  System.out.println(keyPoints);
+
+                                  compositeDisposable.add(iAppService
+                                      .schedule_optimize(totalLength.toString(), graph, limits,
+                                          keyPoints)
+                                      .subscribeOn(Schedulers.io())
+                                      .observeOn(AndroidSchedulers.mainThread())
+                                      .retry()
+                                      .subscribe(new Consumer<String>() {
+                                        @Override
+                                        public void accept(String data) throws Exception {
+                                          Log.e("schedule_optimize", data);
+
+                                          JsonParser jsonParser = new JsonParser();
+                                          JsonArray jsonArrayPath = (JsonArray) jsonParser
+                                              .parse(data);
+
+                                          for (int i = 0; i < jsonArrayPath.size(); i++) {
+                                            JsonArray array = (JsonArray) jsonArrayPath.get(i);
+                                            System.out.println((i + 1) + " th path");
+
+                                            String tempTime1;
+                                            String tempMinute1;
+                                            Integer duration1;
+                                            Integer startTimeMinute1 = 0;
+                                            String startTime1 = "";
+
+                                            for (int j = 0; j < array.size() - 1; j++) {
+                                              System.out.println(array.get(j));
+
+                                              // Add Transportation
+                                              Integer start = Integer
+                                                  .parseInt(array.get(j).toString());
+                                              Integer end = Integer
+                                                  .parseInt(array.get(j + 1).toString());
+
+                                              if (j == 0) {
+                                                JsonObject object = (JsonObject) jsonArray.get(i);
+                                                tempTime1 = object.get("start").toString()
+                                                    .split(" ")[0].split("\"")[1];
+                                                tempMinute1 = object.get("start").toString()
+                                                    .split(" ")[1].split("\"")[0];
+                                                duration1 = Integer.parseInt(
+                                                    object.get("duration").toString()
+                                                        .replace("\"", ""));
+                                                startTimeMinute1 =
+                                                    Integer.parseInt(tempTime1) * 60 + Integer
+                                                        .parseInt(tempMinute1) + duration1;
+                                              }
+
+                                              startTime1 =
+                                                  (startTimeMinute1 / 60) + " " + (startTimeMinute1
+                                                      % 60);
+
+                                              System.out.println("Transportation");
+                                              System.out.println(email.replace("\"", ""));
+                                              System.out.println(currentTravel);
+                                              System.out.println(day);
+                                              System.out.println(startTime1);
+                                              System.out
+                                                  .println(graphArray.get(start).get(end) / 60);
+
+                                              compositeDisposable.add(iAppService
+                                                  .schedule_insert_one(email.replace("\"", ""),
+                                                      currentTravel, day.toString(),
+                                                      "transportation", "0 0", "이동",
+                                                      "이동",
+                                                      startTime1, Integer.toString(
+                                                          graphArray.get(start).get(end) / 60))
+                                                  .subscribeOn(Schedulers.io())
+                                                  .observeOn(AndroidSchedulers.mainThread())
+                                                  .retry()
+                                                  .subscribe(new Consumer<String>() {
+                                                    @Override
+                                                    public void accept(String data)
+                                                        throws Exception {
+                                                      Log.e("schedule_insert_one", data);
+                                                    }
+                                                  }));
+
+                                              // Add Place <-> Should consider exception case
+                                              if (j == array.size() - 2) {
+                                                // this is end condition so, one can do fragment replace to make it possible to refresh the schedule list.
+
+                                                fragmentManager = getSupportFragmentManager();
+                                                FragmentTransaction transaction = fragmentManager
+                                                    .beginTransaction();
+                                                fragmentSchedule = new ScheduleFragment(
+                                                    currentTravel, email);
+                                                transaction.add(R.id.frameLayout, fragmentSchedule)
+                                                    .commit();
+
+                                                continue;
+                                              }
+
+                                              TPlace place = placeList.get(end - size);
+
+                                              Integer startTimeMinute2 =
+                                                  startTimeMinute1 + (graphArray.get(start).get(end)
+                                                      / 60);
+                                              String startTime2 =
+                                                  (startTimeMinute2 / 60) + " " + (startTimeMinute2
+                                                      % 60);
+
+                                              System.out.println("Place");
+                                              System.out.println(email.replace("\"", ""));
+                                              System.out.println(currentTravel);
+                                              System.out.println(day);
+                                              System.out.println(place.getData("name"));
+                                              System.out.println(place.getData("location"));
+                                              System.out.println(place.getData("label"));
+                                              System.out.println(startTime2);
+                                              System.out.println(graphArray.get(end).get(end) / 60);
+
+                                              compositeDisposable.add(iAppService
+                                                  .schedule_insert_one(email.replace("\"", ""),
+                                                      currentTravel, day.toString(),
+                                                      place.getData("name").replace("\"", ""),
+                                                      place.getData("location").replace("\"", "")
+                                                          .replace("[", "")
+                                                          .replace("]", "").replace(",", " "),
+                                                      place.getData("label").replace("\"", ""),
+                                                      place.getData("name").replace("\"", ""),
+                                                      startTime2.replace("\"", ""),
+                                                      Integer.toString(
+                                                          graphArray.get(end).get(end) / 60))
+                                                  .subscribeOn(Schedulers.io())
+                                                  .observeOn(AndroidSchedulers.mainThread())
+                                                  .retry()
+                                                  .subscribe(new Consumer<String>() {
+                                                    @Override
+                                                    public void accept(String data)
+                                                        throws Exception {
+                                                      Log.e("schedule_insert_one", data);
+                                                    }
+                                                  }));
+
+                                              startTimeMinute1 = startTimeMinute2
+                                                  + graphArray.get(end).get(end) / 60;
+
+                                            }
+                                          }
+                                        }
+                                      }));
+
+
+                                }
 
                               }
 
                               @Override
-                              public void onFailure(Call<Model.DirectionResults> call, Throwable t) {
-                                Log.d("CallBack", " Throwable is " +t);
+                              public void onFailure(Call<Model.DirectionResults> call,
+                                  Throwable t) {
+                                Log.d("CallBack", " Throwable is " + t);
                               }
                             });
                           }
@@ -950,16 +1007,24 @@ public class MainActivity extends AppCompatActivity {
         break;
       case R.id.optimize:
         Intent scheduleOptimizeIntent = new Intent(this, ScheduleOptimizeActivity.class);
-        scheduleOptimizeIntent.putExtra("email",email);
-        scheduleOptimizeIntent.putExtra("title",currentTravel);
-        startActivityForResult(scheduleOptimizeIntent,OPTIMIZE_SCHEDULE_REQUEST);
+        scheduleOptimizeIntent.putExtra("email", email);
+        scheduleOptimizeIntent.putExtra("title", currentTravel);
+        startActivityForResult(scheduleOptimizeIntent, OPTIMIZE_SCHEDULE_REQUEST);
         break;
       case R.id.map:
-        if(fragmentState == 1){
+        if (fragmentState == 1) {
           Intent placeMapIntent = new Intent(this, PlaceMapActivity.class);
-          placeMapIntent.putExtra("email",email);
-          placeMapIntent.putExtra("title",currentTravel);
+          placeMapIntent.putExtra("email", email);
+          placeMapIntent.putExtra("title", currentTravel);
           startActivity(placeMapIntent);
+        } else {
+          Intent scheduleMapIntent = new Intent(this, ScheduleMapActivity.class);
+          scheduleMapIntent.putExtra("email", email);
+          scheduleMapIntent.putExtra("title", currentTravel);
+          int sectionNumber = fragmentSchedule.currentTabPostion();
+          scheduleMapIntent.putExtra("sectionNumber", sectionNumber);
+
+          startActivity(scheduleMapIntent);
         }
     }
     return true;

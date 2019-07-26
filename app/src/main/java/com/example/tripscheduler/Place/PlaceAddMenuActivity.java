@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.tripscheduler.R;
@@ -51,6 +52,9 @@ public class PlaceAddMenuActivity extends AppCompatActivity {
     addButton1.setOnClickListener(new OnClickListener() { //Todo 사진찍기,,
       @Override
       public void onClick(View view) {
+
+        Toast.makeText(getApplicationContext(), "준비중입니다! 업데이트를 기대해 주세요!", Toast.LENGTH_SHORT)
+            .show();
 
       }
     });
