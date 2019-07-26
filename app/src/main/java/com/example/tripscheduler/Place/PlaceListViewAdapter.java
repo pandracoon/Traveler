@@ -49,7 +49,7 @@ public class PlaceListViewAdapter extends BaseAdapter {
       view.setBackgroundResource(R.drawable.attraction);
     }
     if (label.equals("\"식당\"")) {
-      view.setBackgroundColor(R.drawable.restaurant);
+      view.setBackgroundResource(R.drawable.restaurant);
     }
     if (label.equals("\"숙박\"")) {
       view.setBackgroundResource(R.drawable.baseline_hotel_black_18dp);

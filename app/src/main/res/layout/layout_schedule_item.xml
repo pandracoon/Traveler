@@ -69,14 +69,14 @@
         tools:gravity="right" />
 
     <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="0dp"
-        android:layout_height="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline84"
-        app:layout_constraintStart_toStartOf="@+id/guideline85"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:color/holo_blue_bright" />
+      android:id="@+id/imageView5"
+      android:layout_width="0dp"
+      android:layout_height="20dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/guideline84"
+      app:layout_constraintStart_toStartOf="@+id/guideline85"
+      app:layout_constraintTop_toTopOf="parent"
+      />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline84"

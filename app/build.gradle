@@ -60,4 +60,6 @@ dependencies {
     // Badge View
     implementation 'com.allenliu.badgeview:library:1.1.1'
     implementation 'com.github.nikartm:image-support:1.0.5'
+
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
 }
